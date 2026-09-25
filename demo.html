@@ -950,24 +950,73 @@
 
 .shop-main { display:flex; gap:32px; padding:24px 40px; }
 .shop-sidebar { width:120px; display:flex; flex-direction:column; gap:24px; padding-top:72px; position:relative; }
-.clothing-area { flex:1; }
-.clothing-masonry { column-count:4; column-gap:16px; }
+/* ===== 娲炴礊鏉挎湇瑁呭睍绀哄尯 ===== */
+.clothing-area {
+  flex:1;
+  position:relative;
+  background-color:#f3ede0;
+  background-image: radial-gradient(circle, #c9c2b2 1.5px, transparent 1.6px);
+  background-size:22px 22px;
+  border:8px solid transparent;
+  border-image: linear-gradient(135deg,#dcdcdc,#9a9a9a,#ececec,#8a8a8a) 1;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.12), 0 6px 24px rgba(0,0,0,0.18);
+  border-radius:6px;
+  min-height:calc(100vh - 130px);
+  overflow:hidden;
+}
+.clothing-masonry { position:relative; width:100%; min-height:calc(100vh - 170px); padding:30px 24px; box-sizing:border-box; }
 
-.clothing-card { position:relative; break-inside:avoid; margin-bottom:16px; border-radius:8px; overflow:hidden; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer; transition:transform .2s, box-shadow .2s; }
-.clothing-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.12); }
+.clothing-card {
+  position:absolute;
+  width:210px;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+  cursor:pointer;
+  transform-origin: top center;
+  transition: box-shadow .3s ease;
+}
+.clothing-card::before {
+  content:"";
+  position:absolute;
+  top:-15px;
+  left:50%;
+  transform:translateX(-50%);
+  width:18px; height:18px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffffff, #b8b8b8 55%, #8a8a8a);
+  border:2px solid #999;
+  box-shadow:0 2px 5px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.7);
+  z-index:3;
+}
+.clothing-card::after {
+  content:"";
+  position:absolute;
+  top:-2px;
+  left:50%;
+  transform:translateX(-50%);
+  width:5px; height:9px;
+  background:linear-gradient(#b0b0b0,#7a7a7a);
+  border-radius:0 0 3px 3px;
+  z-index:2;
+}
+.clothing-card:hover {
+  animation: cardSwing 0.6s ease-in-out infinite;
+  box-shadow:0 12px 30px rgba(0,0,0,0.28);
+  z-index:10;
+}
+@keyframes cardSwing {
+  0%, 100% { transform: rotate(var(--rot, 0deg)); }
+  25% { transform: rotate(calc(var(--rot, 0deg) - 2deg)); }
+  75% { transform: rotate(calc(var(--rot, 0deg) + 2deg)); }
+}
 .clothing-card .cc-img { width:100%; height:auto; display:block; }
 .clothing-card .cc-img-placeholder { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:12px; }
-.clothing-card .cc-author { padding:10px 12px 4px; display:flex; align-items:center; gap:8px; font-size:13px; color:#333; }
-.clothing-card .cc-author-avatar { width:24px; height:24px; border-radius:50%; background:#DC236E; }
-.clothing-card .cc-author-name { font-weight:500; }
-.clothing-card .cc-author-likes { margin-left:auto; color:#DC236E; font-size:12px; }
-.clothing-card .cc-author-follow { font-size:11px; padding:2px 10px; border-radius:10px; border:1px solid #DC236E; color:#DC236E; background:#fff; cursor:pointer; }
-.clothing-card .cc-inspire { padding:4px 12px; font-size:12px; color:#DC236E; }
-.clothing-card .cc-name-price { position:relative; }
-.clothing-card .cc-name-price-bg { position:absolute; bottom:0; left:0; right:0; padding:24px 12px 10px; background:linear-gradient(transparent, rgba(0,0,0,0.6)); color:#fff; font-size:13px; }
-.clothing-card .cc-name-line { display:flex; justify-content:space-between; align-items:center; font-weight:600; }
-.clothing-card .cc-price { color:#DC236E; font-weight:600; font-size:14px; }
-.clothing-card .cc-hot-comment { margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.18); border-radius:4px; font-size:11px; color:#fff; line-height:1.5; backdrop-filter:blur(4px); }
+.clothing-card .cc-name-price { padding:10px 12px 12px; }
+.clothing-card .cc-name-line { display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:13px; color:#222; }
+.clothing-card .cc-price { color:#DC236E; font-weight:700; font-size:14px; }
+.clothing-card .cc-hot-comment { margin-top:8px; padding:5px 9px; background:#faf5ec; border:1px solid #ece3d2; border-radius:6px; font-size:11px; color:#6b5d45; line-height:1.5; }
 
 /* 搭子侧栏头像 */
 .shop-sidebar .mini-avatar-wrap { position:relative; width:108px; }
@@ -1522,24 +1571,40 @@ function renderMasonry() {
   var m = document.getElementById("clothingMasonry");
   m.innerHTML = "";
   var items = CLOTHING_DATA[_currentTab] || [];
-  items.forEach(function(item) {
+  var layouts = [
+    { left: 4,  top: 3,  rot: -4 },
+    { left: 34, top: 1,  rot: 3 },
+    { left: 64, top: 4,  rot: -2 },
+    { left: 12, top: 42, rot: 4 },
+    { left: 42, top: 39, rot: -3 },
+    { left: 72, top: 43, rot: 2 },
+    { left: 24, top: 78, rot: -3 },
+    { left: 58, top: 80, rot: 4 },
+  ];
+  items.forEach(function(item, i) {
     var card = document.createElement("div");
     card.className = "clothing-card";
-    var imgBlock = item.img ? 
-      '<img class="cc-img" src="' + item.img + '" alt="' + item.name + '">' : 
+    var pos = i < layouts.length ? layouts[i] : {
+      left: ((i * 17) % 70) + 5,
+      top: ((i * 23) % 70) + 5,
+      rot: ((i % 5) - 2) * 2
+    };
+    card.style.left = pos.left + "%";
+    card.style.top = pos.top + "%";
+    card.style.setProperty("--rot", pos.rot + "deg");
+    card.style.transform = "rotate(" + pos.rot + "deg)";
+    var imgBlock = item.img ?
+      '<img class="cc-img" src="' + item.img + '" alt="' + item.name + '">' :
       '<div class="cc-img-placeholder" style="background:' + (item.color || '#eee') + '">' + item.name + '</div>';
     card.innerHTML = imgBlock +
       '<div class="cc-name-price">' +
-        '<div class="cc-name-price-bg">' +
-          '<div class="cc-name-line">' + item.name + '<div class="cc-price">' + item.price + '</div></div>' +
-          '<div class="cc-hot-comment">💬 ' + item.comment + '</div>' +
-        '</div>' +
+        '<div class="cc-name-line">' + item.name + '<span class="cc-price">' + item.price + '</span></div>' +
+        '<div class="cc-hot-comment">💬 ' + item.comment + '</div>' +
       '</div>';
     card.onclick = function() { openDetail(item); };
     m.appendChild(card);
   });
 }
-
 function openDetail(item) {
   _currentDetail = item;
   window._detailOpen = true;
