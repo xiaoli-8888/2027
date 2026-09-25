@@ -954,12 +954,7 @@
 .clothing-area {
   flex:1;
   position:relative;
-  background-color:#f3ede0;
-  background-image: radial-gradient(circle, #c9c2b2 1.5px, transparent 1.6px);
-  background-size:22px 22px;
-  border:8px solid transparent;
-  border-image: linear-gradient(135deg,#dcdcdc,#9a9a9a,#ececec,#8a8a8a) 1;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.12), 0 6px 24px rgba(0,0,0,0.18);
+  background:#f5f0e8;
   border-radius:6px;
   min-height:calc(100vh - 130px);
   overflow:hidden;
@@ -968,55 +963,96 @@
 
 .clothing-card {
   position:absolute;
-  width:210px;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+  width:220px;
+  background:transparent;
   cursor:pointer;
   transform-origin: top center;
-  transition: box-shadow .3s ease;
-}
-.clothing-card::before {
-  content:"";
-  position:absolute;
-  top:-15px;
-  left:50%;
-  transform:translateX(-50%);
-  width:18px; height:18px;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #ffffff, #b8b8b8 55%, #8a8a8a);
-  border:2px solid #999;
-  box-shadow:0 2px 5px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.7);
-  z-index:3;
-}
-.clothing-card::after {
-  content:"";
-  position:absolute;
-  top:-2px;
-  left:50%;
-  transform:translateX(-50%);
-  width:5px; height:9px;
-  background:linear-gradient(#b0b0b0,#7a7a7a);
-  border-radius:0 0 3px 3px;
-  z-index:2;
+  transition: transform .3s ease, filter .3s ease;
 }
 .clothing-card:hover {
-  animation: cardSwing 0.6s ease-in-out infinite;
-  box-shadow:0 12px 30px rgba(0,0,0,0.28);
-  z-index:10;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.25));
+  z-index:50;
 }
-@keyframes cardSwing {
-  0%, 100% { transform: rotate(var(--rot, 0deg)); }
-  25% { transform: rotate(calc(var(--rot, 0deg) - 2deg)); }
-  75% { transform: rotate(calc(var(--rot, 0deg) + 2deg)); }
+/* 绾㈣壊鍥鹃拤 */
+.cc-pin {
+  position:absolute;
+  top:-7px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:5;
+  pointer-events:none;
 }
+.cc-pin-head {
+  width:14px; height:14px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #FF6B6B, #C0392B 70%);
+  box-shadow:1px 2px 3px rgba(0,0,0,0.3);
+}
+.cc-pin-needle {
+  width:2px; height:10px;
+  background:#555;
+  margin:-1px auto 0;
+  box-shadow:1px 1px 2px rgba(0,0,0,0.2);
+}
+/* 鏈嶈鍥?- 閫忔槑PNG鐩存帴灞曠ず */
 .clothing-card .cc-img { width:100%; height:auto; display:block; }
-.clothing-card .cc-img-placeholder { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:12px; }
-.clothing-card .cc-name-price { padding:10px 12px 12px; }
-.clothing-card .cc-name-line { display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:13px; color:#222; }
-.clothing-card .cc-price { color:#DC236E; font-weight:700; font-size:14px; }
-.clothing-card .cc-hot-comment { margin-top:8px; padding:5px 9px; background:#faf5ec; border:1px solid #ece3d2; border-radius:6px; font-size:11px; color:#6b5d45; line-height:1.5; }
+.clothing-card .cc-img-placeholder { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:rgba(0,0,0,0.3); font-size:12px; }
+/* 宸︿笂瑙掑搧鍚嶈创绾?*/
+.cc-name-sticker {
+  position:absolute;
+  top:-6px;
+  left:-8px;
+  font-size:16px;
+  font-weight:700;
+  font-family:sans-serif;
+  color:#1a1a1a;
+  background:#fff;
+  padding:3px 10px 3px 8px;
+  border-radius:4px;
+  box-shadow:1px 2px 4px rgba(0,0,0,0.15);
+  z-index:4;
+  white-space:nowrap;
+}
+.cc-name-sticker::before {
+  content:"";
+  display:inline-block;
+  width:7px; height:7px;
+  border-radius:50%;
+  background:#1a1a1a;
+  margin-right:6px;
+  vertical-align:middle;
+}
+/* 鍙充笅瑙掍环鏍煎紓褰㈣创绾?*/
+.cc-price-sticker {
+  position:absolute;
+  bottom:8px;
+  right:-6px;
+  background:#DC236E;
+  color:#fff;
+  font-weight:700;
+  font-size:15px;
+  padding:5px 12px;
+  border-radius:6px 14px 6px 14px;
+  box-shadow:1px 2px 5px rgba(220,35,110,0.4);
+  z-index:4;
+  transform:rotate(-3deg);
+}
+/* 鐢ㄦ埛鍚愭Ы铏氱嚎姘旀场 */
+.cc-comment-bubble {
+  position:absolute;
+  bottom:-14px;
+  left:10px;
+  background:#fffef5;
+  border:1.5px dashed #c9b99a;
+  border-radius:8px;
+  padding:4px 9px;
+  font-size:11px;
+  color:#7a6a4a;
+  line-height:1.4;
+  max-width:180px;
+  box-shadow:1px 2px 4px rgba(0,0,0,0.1);
+  z-index:4;
+}
 
 /* 搭子侧栏头像 */
 .shop-sidebar .mini-avatar-wrap { position:relative; width:108px; }
@@ -1029,30 +1065,31 @@
 .shop-sidebar .mini-online.off { background:#ccc; }
 
 /* 详情面板 */
-.detail-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:200; display:flex; justify-content:flex-end; transition:opacity .3s; }
-.detail-panel { width:520px; max-width:90vw; background:#fff; height:100vh; overflow-y:auto; position:relative; z-index:201; animation:slideIn .3s ease; }
-@keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
-.detail-close { position:absolute; top:16px; right:20px; font-size:28px; cursor:pointer; color:#666; z-index:10; }
-.detail-body { padding:40px 32px; }
-.detail-img { width:100%; height:auto; border-radius:8px; }
-.detail-name { font-size:22px; font-weight:600; margin:16px 0 8px; }
-.detail-author { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-.detail-author-avatar { width:32px; height:32px; border-radius:50%; background:#DC236E; }
-.detail-author-name { font-weight:500; }
-.detail-follow-btn { margin-left:auto; padding:4px 16px; border-radius:12px; background:#DC236E; color:#fff; border:none; cursor:pointer; font-size:12px; }
-.detail-inspire { font-size:13px; color:#DC236E; margin-bottom:12px; }
-.detail-price { font-size:24px; font-weight:700; color:#DC236E; margin-bottom:12px; }
-.detail-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.detail-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:200; display:flex; justify-content:center; align-items:center; transition:opacity .3s; }
+.detail-panel { width:92vw; max-width:1080px; height:86vh; background:#fff; border-radius:14px; position:relative; z-index:201; display:flex; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.4); animation:popIn .3s ease; }
+@keyframes popIn { from { transform:scale(.92); opacity:0; } to { transform:scale(1); opacity:1; } }
+.detail-close { position:absolute; top:14px; right:18px; font-size:28px; cursor:pointer; color:#999; z-index:10; line-height:1; }
+.detail-close:hover { color:#333; }
+.detail-body { display:flex; width:100%; }
+.detail-left { flex:1; background:#f7f5f0; display:flex; align-items:center; justify-content:center; padding:32px; min-width:0; }
+.detail-left .detail-img { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; border-radius:0; }
+.detail-right { width:380px; padding:40px 32px; overflow-y:auto; display:flex; flex-direction:column; }
+.detail-name { font-size:24px; font-weight:700; margin:0 0 8px; }
+.detail-price { font-size:28px; font-weight:700; color:#DC236E; margin-bottom:12px; }
+.detail-inspire { font-size:13px; color:#DC236E; margin-bottom:14px; }
+.detail-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
 .detail-tag { font-size:12px; padding:4px 12px; border-radius:12px; background:#fff0f5; color:#DC236E; }
-.detail-desc-title { border-bottom:2px solid #DC236E; display:inline-block; padding-bottom:4px; font-weight:600; margin-right:16px; }
-.detail-desc { border-left:3px solid #DC236E; padding:12px 16px; background:#fff9fb; border-radius:0 6px 6px 0; font-size:14px; line-height:1.8; margin:12px 0; }
-.detail-actions { display:flex; gap:24px; margin:20px 0; padding:16px 0; border-top:1px solid #eee; border-bottom:1px solid #eee; }
-.detail-action { display:flex; flex-direction:column; align-items:center; cursor:pointer; font-size:12px; color:#666; }
-.detail-action .num { font-size:18px; font-weight:600; color:#333; }
-.detail-action.liked .num { color:#DC236E; }
-.detail-comments { margin-top:16px; }
-.detail-comment { padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:13px; }
-.detail-comment-input { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; margin-top:12px; box-sizing:border-box; }
+.detail-size-title { font-size:14px; font-weight:600; margin-bottom:10px; }
+.detail-sizes { display:flex; gap:10px; margin-bottom:24px; }
+.size-opt { width:44px; height:44px; border:1.5px solid #ddd; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; font-weight:500; transition:all .2s; }
+.size-opt:hover { border-color:#DC236E; color:#DC236E; }
+.size-opt.selected { background:#DC236E; color:#fff; border-color:#DC236E; }
+.detail-add-cart { padding:14px; background:#DC236E; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; transition:background .2s; margin-bottom:24px; }
+.detail-add-cart:hover { background:#B8185A; }
+.detail-comment-title { font-size:14px; font-weight:600; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #eee; }
+.detail-comments { display:flex; flex-direction:column; gap:10px; }
+.detail-comment { font-size:13px; line-height:1.5; color:#444; }
+.detail-comment b { color:#DC236E; margin-right:4px; }
 .detail-comment-send { padding:8px 20px; background:#DC236E; color:#fff; border:none; border-radius:6px; margin-top:8px; cursor:pointer; }
 
 /* 底部聊天对话框 */
@@ -1571,22 +1608,23 @@ function renderMasonry() {
   var m = document.getElementById("clothingMasonry");
   m.innerHTML = "";
   var items = CLOTHING_DATA[_currentTab] || [];
+  // 鏉傚織鎷艰创甯冨眬锛?+4 涓よ锛?0-20% 閲嶅彔
   var layouts = [
-    { left: 4,  top: 3,  rot: -4 },
-    { left: 34, top: 1,  rot: 3 },
-    { left: 64, top: 4,  rot: -2 },
-    { left: 12, top: 42, rot: 4 },
-    { left: 42, top: 39, rot: -3 },
-    { left: 72, top: 43, rot: 2 },
-    { left: 24, top: 78, rot: -3 },
-    { left: 58, top: 80, rot: 4 },
+    { left: 1,  top: 3,  rot: -3 },
+    { left: 17, top: 1,  rot: 2 },
+    { left: 33, top: 4,  rot: -1 },
+    { left: 49, top: 2,  rot: 3 },
+    { left: 9,  top: 42, rot: 1 },
+    { left: 25, top: 40, rot: -2 },
+    { left: 41, top: 43, rot: 2 },
+    { left: 57, top: 41, rot: -1 },
   ];
   items.forEach(function(item, i) {
     var card = document.createElement("div");
     card.className = "clothing-card";
     var pos = i < layouts.length ? layouts[i] : {
-      left: ((i * 17) % 70) + 5,
-      top: ((i * 23) % 70) + 5,
+      left: ((i * 16) % 60) + 2,
+      top: ((i * 21) % 50) + 40,
       rot: ((i % 5) - 2) * 2
     };
     card.style.left = pos.left + "%";
@@ -1596,11 +1634,12 @@ function renderMasonry() {
     var imgBlock = item.img ?
       '<img class="cc-img" src="' + item.img + '" alt="' + item.name + '">' :
       '<div class="cc-img-placeholder" style="background:' + (item.color || '#eee') + '">' + item.name + '</div>';
-    card.innerHTML = imgBlock +
-      '<div class="cc-name-price">' +
-        '<div class="cc-name-line">' + item.name + '<span class="cc-price">' + item.price + '</span></div>' +
-        '<div class="cc-hot-comment">💬 ' + item.comment + '</div>' +
-      '</div>';
+    card.innerHTML =
+      '<div class="cc-pin"><div class="cc-pin-head"></div><div class="cc-pin-needle"></div></div>' +
+      imgBlock +
+      '<div class="cc-name-sticker">' + item.name + '</div>' +
+      '<div class="cc-price-sticker">' + item.price + '</div>' +
+      '<div class="cc-comment-bubble">' + item.comment + '</div>';
     card.onclick = function() { openDetail(item); };
     m.appendChild(card);
   });
@@ -1609,38 +1648,32 @@ function openDetail(item) {
   _currentDetail = item;
   window._detailOpen = true;
   var body = document.getElementById("detailBody");
-  var imgHtml = item.img ? 
-    '<img class="detail-img" src="' + item.img + '">' : 
+  var imgHtml = item.img ?
+    '<img class="detail-img" src="' + item.img + '" alt="' + item.name + '">' :
     '<div class="detail-img" style="aspect-ratio:3/4;background:' + (item.color || '#eee') + ';display:flex;align-items:center;justify-content:center;color:#fff;border-radius:8px;">' + item.name + '</div>';
-  body.innerHTML = imgHtml +
-    '<div class="detail-name">' + item.name + '</div>' +
-    '<div class="detail-author">' +
-      '<div class="detail-author-avatar"></div>' +
-      '<span class="detail-author-name">' + item.author + '</span>' +
-      '<button class="detail-follow-btn">+ 关注</button>' +
-    '</div>' +
-    '<div class="detail-inspire">灵感来源：' + item.inspiration + '</div>' +
-    '<div class="detail-price">' + item.price + '</div>' +
-    '<div class="detail-tags">' + item.tags.map(function(t){return '<span class="detail-tag">' + t + '</span>';}).join('') + '</div>' +
-    '<div class="detail-desc-title" style="font-weight:600;">详细介绍</div>' +
-    '<div class="detail-desc">从MTV舞台夸张视觉提取, 牛角廓形+粉蓝格纹, 适合派对红毯, 充气感立体泡泡袖。</div>' +
-    '<div class="detail-actions">' +
-      '<div class="detail-action"><span class="num">♥ ' + item.likes + '</span>点赞</div>' +
-      '<div class="detail-action"><span class="num">★ 112</span>收藏</div>' +
-      '<div class="detail-action"><span class="num">💬 34</span>评论</div>' +
-    '</div>' +
-    '<div class="detail-comments">' +
-      '<div class="detail-comment"><b>ChromeHeart</b>：牛角太绝了! 能不能出黑色版本?</div>' +
-      '<div class="detail-comment"><b>PlatformPunk</b>：我想用这个廓形换配色。</div>' +
-      '<input class="detail-comment-input" placeholder="写下你的想法..."/>' +
-      '<button class="detail-comment-send" onclick="postComment(this)">发送</button>' +
+  body.innerHTML =
+    '<div class="detail-left">' + imgHtml + '</div>' +
+    '<div class="detail-right">' +
+      '<div class="detail-name">' + item.name + '</div>' +
+      '<div class="detail-price">' + item.price + '</div>' +
+      '<div class="detail-inspire">灵感来源：' + item.inspiration + '</div>' +
+      '<div class="detail-tags">' + item.tags.map(function(t){return '<span class="detail-tag">' + t + '</span>';}).join('') + '</div>' +
+      '<div class="detail-size-title">选择尺码</div>' +
+      '<div class="detail-sizes">' +
+        '<span class="size-opt">S</span><span class="size-opt">M</span><span class="size-opt">L</span><span class="size-opt">XL</span>' +
+      '</div>' +
+      '<button class="detail-add-cart" onclick="addToCart(_currentDetail)">加入购物车</button>' +
+      '<div class="detail-comment-title">用户吐槽</div>' +
+      '<div class="detail-comments">' +
+        '<div class="detail-comment"><b>ChromeHeart</b>：牛角太绝了! 能不能出黑色版本?</div>' +
+        '<div class="detail-comment"><b>PlatformPunk</b>：我想用这个廓形换配色。</div>' +
+      '</div>' +
     '</div>';
   document.getElementById("detailOverlay").style.display = "flex";
-      showFirstAdvisorTip("如果纠结可以找我聊聊", 4000);
+  showFirstAdvisorTip("如果纠结可以找我聊聊", 4000);
 }
 
-
-    function showFirstAdvisorTip(text, duration) {
+function showFirstAdvisorTip(text, duration) {
       var sidebar = document.getElementById("shopSidebar");
       if (!sidebar) return;
       var firstAvatar = sidebar.querySelector(".mini-avatar-wrap");
