@@ -1,0 +1,14 @@
+# Temp fix scripts
+_fix*.ps1
+_extract.ps1
+fix_check.ps1
+fix_apply.ps1
+fix_dump.ps1
+fix.ps1
+temp_chat.txt
+temp_main.js
+temp_half*.js
+chunk*.js
+fix_check.txt
+splash_search.txt
+test_pre.html

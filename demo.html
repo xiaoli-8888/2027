@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light"><head>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style id="theme-vars">
+  :root {
+    --bg: #FAFAFA;
+    --bg-elev: #FFFFFF;
+    --text: #1A1A1A;
+    --text-muted: #8A8A8A;
+    --text-faint: #C4C4C4;
+    --border: #E8E8E8;
+    --brand: #1A1A1A;
+    --brand-soft: #F0F0F0;
+    --accent: #C41E3A;
+  }
+</style>
+<style type="text/tailwindcss">
+  @theme inline {
+    --color-bg: var(--bg);
+    --color-foreground: var(--text);
+    --color-muted: var(--text-muted);
+    --color-border: var(--border);
+    --color-brand: var(--brand);
+  }
+</style>
+<style type="text/tailwindcss">
+  @layer base {
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); }
+  }
+</style>
+<style id="semantic-token-fallback">
+  .bg-primary { background-color: var(--brand); }
+  .text-primary { color: var(--brand); }
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After Closet — 挑几个搭子,陪你逛</title>
+<style>
+  /* ===== Design Tokens (After Hours 风格) ===== */
+  :root {
+    --bg: #FAFAFA;
+    --bg-elev: #FFFFFF;
+    --text: #1A1A1A;
+    --text-muted: #8A8A8A;
+    --text-faint: #C4C4C4;
+    --border: #E8E8E8;
+    --brand: #1A1A1A;
+    --brand-soft: #F0F0F0;
+    --accent: #E63946;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-full: 999px;
+    --font: "PingFang SC", "Helvetica Neue", "Inter", system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.01em;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+  /* ===== Page Transitions ===== */
+  .page { display: none; min-height: 100%; animation: fadeIn .4s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ===== Page 1: Select Companions ===== */
+  .select-page { padding: 32px 40px 120px; overflow: visible; }
+  .brand-title {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px; text-align: left;
+  }
+  .brand-title em { font-style: italic; font-weight: 400; }
+  .brand-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 24px; text-align: left;
+    letter-spacing: 0.02em;
+  }
+  .section-label {
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .companions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 32px;
+  }
+  .companion-card {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: transform .25s ease;
+    padding: 0;
+    position: relative;
+  }
+  .companion-card:hover { transform: translateY(-4px); }
+  .companion-card.selected .avatar-wrap {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+  }
+  .companion-card.selected .avatar-wrap::after {
+    content: "";
+    position: absolute;
+    bottom: -6px; right: -6px;
+    width: 22px; height: 22px;
+    background: var(--text);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .companion-card.selected .avatar-wrap::before {
+    content: "✓";
+    position: absolute;
+    bottom: -4px; right: -3px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 2;
+  }
+  .avatar-wrap {
+    position: relative;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background: var(--bg-elev);
+    transition: outline .2s ease;
+    border: 1px solid var(--border);
+  }
+  .companion-name {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .companion-name em { font-style: italic; font-weight: 400; color: var(--text-muted); font-size: 13px; }
+  .companion-role {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== Artist Avatars (flat SVG illustrations) ===== */
+  .avatar-wrap svg { width: 100%; height: 100%; display: block; }
+
+  /* ===== Sticky Footer ===== */
+  .footer-bar {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 20px 40px;
+    background: rgba(250,250,250,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 10;
+  }
+  .selected-count {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .selected-count b { color: var(--text); font-weight: 500; }
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--text);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: opacity .2s;
+  }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-primary:not(:disabled):hover { opacity: 0.85; }
+
+  /* ===== Page 2: Shopping Page ===== */
+  .shop-page { padding: 0 24px 160px; }
+  .shop-header {
+    padding: 20px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .back-btn {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  .back-btn:hover { color: var(--text); }
+  .progress {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--text);
+    width: 0%;
+    transition: width .5s ease;
+  }
+  .progress-num {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Product Card */
+  .product {
+    margin-top: 16px;
+    animation: fadeIn .5s ease;
+  }
+  .product-img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: var(--bg-elev);
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .product-img svg { width: 70%; height: 90%; }
+
+  .product-meta {
+    margin-top: 20px;
+  }
+  .product-brand {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .product-name {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .product-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .product-price {
+    font-size: 18px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .product-actions {
+    display: flex; gap: 12px; margin-top: 20px;
+  }
+  .btn-ghost {
+    flex: 1;
+    padding: 14px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: var(--text);
+    transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--text); }
+  .btn-ghost.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  /* ===== Companion Chat Layer ===== */
+  .chat-layer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 24px 20px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .bubble {
+    pointer-events: auto;
+    position: relative;
+    max-width: 260px;
+    padding: 12px 16px;
+    background: #1A1A1A;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.55;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    animation: bubbleIn .35s cubic-bezier(.2,.8,.2,1.2);
+  }
+  .bubble .who {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 28px;
+    width: 12px; height: 12px;
+    background: #1A1A1A;
+    transform: rotate(45deg);
+    border-radius: 0 0 2px 0;
+  }
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(12px) scale(.9); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Companion Avatar Bar */
+  .companion-bar {
+    display: flex;
+    gap: 10px;
+    padding-top: 8px;
+  }
+  .mini-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1.5px solid var(--border);
+    background: var(--bg-elev);
+    cursor: pointer;
+    transition: transform .2s, border-color .2s;
+    pointer-events: auto;
+  }
+  .mini-avatar:hover { transform: scale(1.08); }
+  .mini-avatar.speaking {
+    border-color: var(--text);
+    animation: pulse 1.2s ease infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(26,26,26,0.15); }
+    50% { box-shadow: 0 0 0 6px rgba(26,26,26,0); }
+  }
+  .mini-avatar svg { width: 100%; height: 100%; }
+
+  /* Reply prompt */
+  .reply-hint {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .reply-hint:hover { color: var(--text); border-color: var(--text); }
+
+  /* ===== Nav Arrows ===== */
+  .product-nav {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 28px;
+  }
+  .nav-btn {<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style id="theme-vars">
+  :root {
+    --bg: #FAFAFA;
+    --bg-elev: #FFFFFF;
+    --text: #1A1A1A;
+    --text-muted: #8A8A8A;
+    --text-faint: #C4C4C4;
+    --border: #E8E8E8;
+    --brand: #1A1A1A;
+    --brand-soft: #F0F0F0;
+    --accent: #C41E3A;
+  }
+</style>
+<style type="text/tailwindcss">
+  @theme inline {
+    --color-bg: var(--bg);
+    --color-foreground: var(--text);
+    --color-muted: var(--text-muted);
+    --color-border: var(--border);
+    --color-brand: var(--brand);
+  }
+</style>
+<style type="text/tailwindcss">
+  @layer base {
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); }
+  }
+</style>
+<style id="semantic-token-fallback">
+  .bg-primary { background-color: var(--brand); }
+  .text-primary { color: var(--brand); }
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After Closet — 挑几个搭子,陪你逛</title>
+<style>
+  /* ===== Design Tokens (After Hours 风格) ===== */
+  :root {
+    --bg: #FAFAFA;
+    --bg-elev: #FFFFFF;
+    --text: #1A1A1A;
+    --text-muted: #8A8A8A;
+    --text-faint: #C4C4C4;
+    --border: #E8E8E8;
+    --brand: #1A1A1A;
+    --brand-soft: #F0F0F0;
+    --accent: #E63946;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-full: 999px;
+    --font: "PingFang SC", "Helvetica Neue", "Inter", system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.01em;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+  /* ===== Page Transitions ===== */
+  .page { display: none; min-height: 100%; animation: fadeIn .4s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ===== Page 1: Select Companions ===== */
+  .select-page { padding: 32px 40px 120px; overflow: visible; }
+  .brand-title {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px; text-align: left;
+  }
+  .brand-title em { font-style: italic; font-weight: 400; }
+  .brand-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 24px; text-align: left;
+    letter-spacing: 0.02em;
+  }
+  .section-label {
+    font-size: 12px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .companions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 32px;
+  }
+  .companion-card {
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: transform .25s ease;
+    padding: 0;
+    position: relative;
+  }
+  .companion-card:hover { transform: translateY(-4px); }
+  .companion-card.selected .avatar-wrap {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+  }
+  .companion-card.selected .avatar-wrap::after {
+    content: "";
+    position: absolute;
+    bottom: -6px; right: -6px;
+    width: 22px; height: 22px;
+    background: var(--text);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .companion-card.selected .avatar-wrap::before {
+    content: "✓";
+    position: absolute;
+    bottom: -4px; right: -3px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 2;
+  }
+  .avatar-wrap {
+    position: relative;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background: var(--bg-elev);
+    transition: outline .2s ease;
+    border: 1px solid var(--border);
+  }
+  .companion-name {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .companion-name em { font-style: italic; font-weight: 400; color: var(--text-muted); font-size: 13px; }
+  .companion-role {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ===== Artist Avatars (flat SVG illustrations) ===== */
+  .avatar-wrap svg { width: 100%; height: 100%; display: block; }
+
+  /* ===== Sticky Footer ===== */
+  .footer-bar {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 20px 40px;
+    background: rgba(250,250,250,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 10;
+  }
+  .selected-count {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .selected-count b { color: var(--text); font-weight: 500; }
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--text);
+    color: #fff;
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: opacity .2s;
+  }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-primary:not(:disabled):hover { opacity: 0.85; }
+
+  /* ===== Page 2: Shopping Page ===== */
+  .shop-page { padding: 0 24px 160px; }
+  .shop-header {
+    padding: 20px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .back-btn {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+  }
+  .back-btn:hover { color: var(--text); }
+  .progress {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--text);
+    width: 0%;
+    transition: width .5s ease;
+  }
+  .progress-num {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Product Card */
+  .product {
+    margin-top: 16px;
+    animation: fadeIn .5s ease;
+  }
+  .product-img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: var(--bg-elev);
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .product-img svg { width: 70%; height: 90%; }
+
+  .product-meta {
+    margin-top: 20px;
+  }
+  .product-brand {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .product-name {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .product-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .product-price {
+    font-size: 18px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .product-actions {
+    display: flex; gap: 12px; margin-top: 20px;
+  }
+  .btn-ghost {
+    flex: 1;
+    padding: 14px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: var(--text);
+    transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--text); }
+  .btn-ghost.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  /* ===== Companion Chat Layer ===== */
+  .chat-layer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 24px 20px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .bubble {
+    pointer-events: auto;
+    position: relative;
+    max-width: 260px;
+    padding: 12px 16px;
+    background: #1A1A1A;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.55;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    animation: bubbleIn .35s cubic-bezier(.2,.8,.2,1.2);
+  }
+  .bubble .who {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 28px;
+    width: 12px; height: 12px;
+    background: #1A1A1A;
+    transform: rotate(45deg);
+    border-radius: 0 0 2px 0;
+  }
+  @keyframes bubbleIn {
+    from { opacity: 0; transform: translateY(12px) scale(.9); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Companion Avatar Bar */
+  .companion-bar {
+    display: flex;
+    gap: 10px;
+    padding-top: 8px;
+  }
+  .mini-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1.5px solid var(--border);
+    background: var(--bg-elev);
+    cursor: pointer;
+    transition: transform .2s, border-color .2s;
+    pointer-events: auto;
+  }
+  .mini-avatar:hover { transform: scale(1.08); }
+  .mini-avatar.speaking {
+    border-color: var(--text);
+    animation: pulse 1.2s ease infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(26,26,26,0.15); }
+    50% { box-shadow: 0 0 0 6px rgba(26,26,26,0); }
+  }
+  .mini-avatar svg { width: 100%; height: 100%; }
+
+  /* Reply prompt */
+  .reply-hint {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .reply-hint:hover { color: var(--text); border-color: var(--text); }
+
+  /* ===== Nav Arrows ===== */
+  .product-nav {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 28px;
+  }
+  .nav-btn {
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) { color: var(--text); border-color: var(--text); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  @media (max-width: 640px) {
+    .select-page { padding: 48px 24px 120px; }
+    .brand-title { font-size: 36px; }
+    .companions-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 24px; }
+    .avatar-wrap { width: 110px; height: 110px; margin: 0 auto 10px; }
+    .companion-card { text-align: center; }
+    .footer-bar { padding: 16px 24px; }
+  }
+
+  /* ===== 开场 Splash 搭子入场仪式 ===== */
+  /* ============ 撕开胶带开场 ============ */
+  .splash {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    transition: opacity 0.4s ease;
+  }
+  .splash.torn { opacity: 0; pointer-events: none; }
+
+  /* 标题和副标题 —— 胶带撕开后才出现 */
+  .splash-title {
+    position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
+    font-size: 52px; font-weight: 300; letter-spacing: -0.02em;
+    opacity: 0; transition: opacity 0.8s ease 0.1s;
+  }
+  .splash.torn .splash-title { opacity: 1; }
+  .splash-title em { font-style: italic; font-weight: 400; }
+  .splash-sub {
+    position: absolute; top: 40%; left: 50%; transform: translateX(-50%);
+    font-size: 15px; color: var(--text-muted); letter-spacing: 0.05em;
+    opacity: 0; transition: opacity 0.8s ease 0.3s;
+  }
+  .splash.torn .splash-sub { opacity: 1; }
+
+  /* 头像 —— 胶带撕开后从下方浮现 */
+  .splash-avatars {
+    position: absolute; top: 55%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; gap: 24px;
+    opacity: 0; transition: opacity 0.6s ease 0.5s, transform 0.8s cubic-bezier(.2,.8,.2,1) 0.5s;
+  }
+  .splash.torn .splash-avatars { opacity: 1; transform: translate(-50%, -50%) translateY(-10px); }
+  .splash-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #eee; overflow: hidden;
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(.2,.8,.2,1);
+  }
+  .splash.torn .splash-avatar { animation: avatarPop 0.6s cubic-bezier(.2,.8,.2,1) forwards; }
+  .splash.torn .splash-avatar:nth-child(1) { animation-delay: 0.55s; }
+  .splash.torn .splash-avatar:nth-child(2) { animation-delay: 0.65s; }
+  .splash.torn .splash-avatar:nth-child(3) { animation-delay: 0.75s; }
+  .splash.torn .splash-avatar:nth-child(4) { animation-delay: 0.85s; }
+  .splash.torn .splash-avatar:nth-child(5) { animation-delay: 0.95s; }
+  @keyframes avatarPop {
+    from { opacity: 0; transform: scale(0.5) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .splash-avatar img, .splash-avatar svg { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ============ 拼贴开箱开场 ============ */
+  .tape-wrap {
+    position: absolute; top: 50%; left: 0; right: 0;
+    transform: translateY(-50%);
+    height: 320px;
+    cursor: grab;
+    user-select: none;
+    z-index: 5;
+  }
+  .tape-wrap:active { cursor: grabbing; }
+  .collage-svg {
+    width: 100%; height: 100%;
+    display: block;
+  }
+  /* 胶带飞出动画 */
+  .collage-svg .tape-piece {
+    transform-origin: center center;
+  }
+  .tape-wrap.tearing .collage-svg .tape-piece {
+    animation: tapeFly 0.65s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .tape-wrap.tearing .collage-svg .tape-piece.tp-1 { animation-delay: 0s; }
+  .tape-wrap.tearing .collage-svg .tape-piece.tp-2 { animation-delay: 0.05s; }
+  .tape-wrap.tearing .collage-svg .tape-piece.tp-3 { animation-delay: 0.1s; }
+  .tape-wrap.tearing .collage-svg .tape-piece.tp-4 { animation-delay: 0.15s; }
+
+  @keyframes tapeFly {
+    0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+    30%  { transform: translate(var(--fx,0), var(--fy,8px)) rotate(var(--fr,-12deg)) scale(0.85); opacity: 1; }
+    100% { transform: translate(calc(var(--fx,0)*2.5), calc(var(--fy,8px)*4)) rotate(calc(var(--fr,-12deg)*2)) scale(0.5); opacity: 0; }
+  }
+  /* 底下的拼贴内容延迟淡出 */
+  .collage-svg .under-layer {
+    opacity: 0;
+    transition: opacity 0.5s ease 0.3s;
+  }
+  .tape-wrap.tearing .collage-svg .under-layer { opacity: 1; }
+
+  .tape-wrap.tearing {
+    transition: opacity 0.15s ease 0.7s;
+    opacity: 0;
+  }
+
+  /* 提示文字 */
+  .tape-hint {
+    position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: #8B7A4A; letter-spacing: 0.12em;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.75;
+    z-index: 10;
+  }
+  .tape-hint-arrow {
+    position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+    font-size: 16px; color: #8B7A4A;
+    pointer-events: none;
+    animation: hintPulse 1.6s ease-in-out infinite;
+    z-index: 10;
+  }
+  @keyframes hintPulse {
+    0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) scaleX(1.3); opacity: 1; }
+  }
+
+  /* 购物袋光标 */
+  body
+  .shopbag-cursor svg { width: 100%; height: 100%; }
+  .shopbag-cursor.big { width: 38px; height: 44px; transform: translate(-19px, -22px); }
+  
+  @keyframes trailFade {
+    0% { opacity: 0.8; transform: translate(-4px, -4px) scale(1); }
+    100% { opacity: 0; transform: translate(-4px, -4px) scale(0.3); }
+  }
+
+  /* 主页面气泡对话 */
+  .bubble {
+    position: absolute; z-index: 100;
+    background: #1A1A1A; color: #fff; font-size: 12px;
+    padding: 8px 14px; border-radius: 14px;
+    white-space: nowrap; opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -100%);
+    animation: bubbleShow 3.2s forwards;
+  }
+  .bubble::after {
+    content: ""; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+    border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #1A1A1A;
+  }
+  @keyframes bubbleShow {
+    0% { opacity: 0; transform: translate(-50%, -90%) scale(0.8); }
+    15% { opacity: 1; transform: translate(-50%, -102%) scale(1.05); }
+    30% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+    85% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -104%) scale(0.95); }
+  }
+
+  /* splash 结束后显示主页面 */
+  .page { opacity: 1; transition: opacity 0.6s ease; }
+/* === 新购物页样式 === */
+.shop-header { display:flex; align-items:center; gap:24px; padding:16px 24px; }
+.shop-search { position: relative; display: inline-flex; margin-right: 12px; }
+.shop-search input { padding: 8px 16px 8px 36px; border: 1px solid #ddd; border-radius: 20px; font-size: 14px; width: 200px; outline: none; transition: border-color .2s; }
+.shop-search input:focus { border-color: #DC236E; }
+.shop-search .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: .5; }.cart-btn { position: absolute; right: 24px; top: 20px; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #eee; background: #fff; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: transform .2s, border-color .2s; }
+.cart-btn:hover { transform: scale(1.1); border-color: #DC236E; }
+.cart-count { position: absolute; top: -2px; right: -2px; background: #DC236E; color: #fff; font-size: 11px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+.shop-header { position: relative; }
+/* 购物车弹窗 */
+.cart-popup { position: fixed; top: 70px; right: 24px; width: 380px; max-height: 70vh; background: #fff; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); z-index: 300; overflow: hidden; display: none; flex-direction: column; }
+.cart-popup.open { display: flex; }
+.cart-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+.cart-header .close-cart { cursor: pointer; color: #999; font-size: 20px; }
+.cart-companions { padding: 12px 20px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+.cart-companions h4 { font-size: 12px; color: #999; margin-bottom: 8px; font-weight: 500; }
+.cart-companion-list { display: flex; gap: 8px; }
+.cart-companion-list img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.cart-items { flex: 1; overflow-y: auto; padding: 12px 20px; }
+.cart-item { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+.cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+.cart-item-info { flex: 1; }
+.cart-item-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.cart-item-price { font-size: 13px; color: #DC236E; font-weight: 600; }
+.cart-item-remove { color: #999; cursor: pointer; font-size: 12px; }
+.cart-item-remove:hover { color: #DC236E; }
+.cart-footer { padding: 16px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+.cart-total { font-size: 14px; }
+.cart-total b { color: #DC236E; font-size: 18px; }
+.cart-checkout { background: #DC236E; color: #fff; border: none; padding: 10px 24px; border-radius: 20px; cursor: pointer; font-size: 14px; }
+.cart-empty { padding: 40px; text-align: center; color: #ccc; }.toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #DC236E; color: #fff; padding: 10px 24px; border-radius: 20px; font-size: 14px; z-index: 9999; opacity: 0; transition: opacity .3s; pointer-events: none; }
+.toast.show { opacity: 1; }.shop-tabs { padding-left: 0; display:flex; gap:8px; }
+.shop-tab { padding:8px 20px; border-radius:20px; border:1px solid #ddd; background:#fff; font-size:14px; cursor:pointer; transition:all .2s; }
+.shop-tab.active { background:#DC236E; color:#fff; border-color:#DC236E; }
+.shop-tab:hover:not(.active) { border-color:#DC236E; color:#DC236E; }
+
+.shop-main { display:flex; gap:32px; padding:24px 40px; }
+.shop-sidebar { width:120px; display:flex; flex-direction:column; gap:24px; padding-top:72px; position:relative; }
+.clothing-area { flex:1; }
+.clothing-masonry { column-count:4; column-gap:16px; }
+
+.clothing-card { position:relative; break-inside:avoid; margin-bottom:16px; border-radius:8px; overflow:hidden; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.08); cursor:pointer; transition:transform .2s, box-shadow .2s; }
+.clothing-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.12); }
+.clothing-card .cc-img { width:100%; height:auto; display:block; }
+.clothing-card .cc-img-placeholder { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:12px; }
+.clothing-card .cc-author { padding:10px 12px 4px; display:flex; align-items:center; gap:8px; font-size:13px; color:#333; }
+.clothing-card .cc-author-avatar { width:24px; height:24px; border-radius:50%; background:#DC236E; }
+.clothing-card .cc-author-name { font-weight:500; }
+.clothing-card .cc-author-likes { margin-left:auto; color:#DC236E; font-size:12px; }
+.clothing-card .cc-author-follow { font-size:11px; padding:2px 10px; border-radius:10px; border:1px solid #DC236E; color:#DC236E; background:#fff; cursor:pointer; }
+.clothing-card .cc-inspire { padding:4px 12px; font-size:12px; color:#DC236E; }
+.clothing-card .cc-name-price { position:relative; }
+.clothing-card .cc-name-price-bg { position:absolute; bottom:0; left:0; right:0; padding:24px 12px 10px; background:linear-gradient(transparent, rgba(0,0,0,0.6)); color:#fff; font-size:13px; }
+.clothing-card .cc-name-line { display:flex; justify-content:space-between; align-items:center; font-weight:600; }
+.clothing-card .cc-price { color:#DC236E; font-weight:600; font-size:14px; }
+.clothing-card .cc-hot-comment { margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.18); border-radius:4px; font-size:11px; color:#fff; line-height:1.5; backdrop-filter:blur(4px); }
+
+/* 搭子侧栏头像 */
+.shop-sidebar .mini-avatar-wrap { position:relative; width:108px; }
+.shop-sidebar .mini-avatar { width:108px; height:108px; border-radius:50%; object-fit:cover; cursor:pointer; transition:all .3s; filter:none; opacity:1; position:relative; z-index:201; }
+.shop-sidebar .mini-avatar:hover { filter:none; opacity:1; transform:translateY(-2px); }
+.shop-sidebar .mini-avatar.active { filter:none; opacity:1; }
+.shop-sidebar .mini-name { text-align:center; font-size:12px; margin-top:6px; color:#333; }
+.shop-sidebar .mini-online { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; }
+.shop-sidebar .mini-online.on { background:#4CAF50; box-shadow:0 0 6px #4CAF50; }
+.shop-sidebar .mini-online.off { background:#ccc; }
+
+/* 详情面板 */
+.detail-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:200; display:flex; justify-content:flex-end; transition:opacity .3s; }
+.detail-panel { width:520px; max-width:90vw; background:#fff; height:100vh; overflow-y:auto; position:relative; z-index:201; animation:slideIn .3s ease; }
+@keyframes slideIn { from { transform:translateX(100%); } to { transform:translateX(0); } }
+.detail-close { position:absolute; top:16px; right:20px; font-size:28px; cursor:pointer; color:#666; z-index:10; }
+.detail-body { padding:40px 32px; }
+.detail-img { width:100%; height:auto; border-radius:8px; }
+.detail-name { font-size:22px; font-weight:600; margin:16px 0 8px; }
+.detail-author { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.detail-author-avatar { width:32px; height:32px; border-radius:50%; background:#DC236E; }
+.detail-author-name { font-weight:500; }
+.detail-follow-btn { margin-left:auto; padding:4px 16px; border-radius:12px; background:#DC236E; color:#fff; border:none; cursor:pointer; font-size:12px; }
+.detail-inspire { font-size:13px; color:#DC236E; margin-bottom:12px; }
+.detail-price { font-size:24px; font-weight:700; color:#DC236E; margin-bottom:12px; }
+.detail-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.detail-tag { font-size:12px; padding:4px 12px; border-radius:12px; background:#fff0f5; color:#DC236E; }
+.detail-desc-title { border-bottom:2px solid #DC236E; display:inline-block; padding-bottom:4px; font-weight:600; margin-right:16px; }
+.detail-desc { border-left:3px solid #DC236E; padding:12px 16px; background:#fff9fb; border-radius:0 6px 6px 0; font-size:14px; line-height:1.8; margin:12px 0; }
+.detail-actions { display:flex; gap:24px; margin:20px 0; padding:16px 0; border-top:1px solid #eee; border-bottom:1px solid #eee; }
+.detail-action { display:flex; flex-direction:column; align-items:center; cursor:pointer; font-size:12px; color:#666; }
+.detail-action .num { font-size:18px; font-weight:600; color:#333; }
+.detail-action.liked .num { color:#DC236E; }
+.detail-comments { margin-top:16px; }
+.detail-comment { padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:13px; }
+.detail-comment-input { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; margin-top:12px; box-sizing:border-box; }
+.detail-comment-send { padding:8px 20px; background:#DC236E; color:#fff; border:none; border-radius:6px; margin-top:8px; cursor:pointer; }
+
+/* 底部聊天对话框 */
+.chat-dialog { position:fixed; bottom:24px; left:220px; transform:none; background:#fff; border-radius:20px; box-shadow:0 8px 32px rgba(0,0,0,0.15); z-index:250; display:flex; flex-direction:column; overflow:hidden; animation:chatSlideUp .3s ease; width:560px; max-width:90vw; }
+@keyframes chatSlideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+.chat-dialog-title { padding:14px 20px; font-weight:600; border-bottom:1px solid #f0f0f0; }
+.chat-dialog-title @ { color:#DC236E; }
+.chat-dialog-input-wrap { display:flex; gap:8px; padding:12px 16px; }
+.chat-dialog-input { flex:1; padding:10px 14px; border:1px solid #eee; border-radius:12px; font-size:14px; outline:none; }
+.chat-dialog-input:focus { border-color:#DC236E; }
+.chat-dialog-send { padding:10px 24px; background:#DC236E; color:#fff; border:none; border-radius:12px; cursor:pointer; font-size:14px; }
+
+/* 搭子回复气泡 */
+.advisor-bubble { position:fixed; background:#fff; border:2px solid #DC236E; border-radius:12px; padding:12px 16px; max-width:240px; font-size:13px; line-height:1.6; box-shadow:0 4px 16px rgba(220,35,110,0.15); z-index:260; animation:bubbleIn .3s ease; pointer-events:none; }
+.advisor-bubble::before { content:""; position:absolute; left:-8px; top:19px; border:8px solid transparent; border-right-color:#fff; }
+.advisor-bubble::after { content:""; position:absolute; left:-12px; top:18px; border:9px solid transparent; border-right-color:#DC236E; z-index:-1; }
+@keyframes bubbleIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }/* === 搭子滚动选择页 === */
+:root { --primary: #DC236E; --primary-dark: #B8185A; }
+.companion-scroller { margin: 24px -60px; padding: 0 60px; overflow: visible; }
+.scroller-track { display: flex; gap: 48px; animation: scrollLeft 60s linear infinite; }
+.scroller-row2 .scroller-track { animation-direction: reverse; }
+.companion-scroller:hover .scroller-track { animation-play-state: paused; }
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+/* 搭子卡片 */
+.scroller-card { flex-shrink: 0; width: 180px; text-align: center; cursor: pointer; transition: transform .3s; position: relative; }
+.scroller-card:hover { transform: translateY(-4px); }
+.scroller-card img, .scroller-card svg { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto;  transition: filter .3s; }
+
+.scroller-card.selected img, .scroller-card.selected svg { filter: none;  }
+.scroller-name { margin-top: 12px; font-weight: 500; font-size: 14px; color: #1a1a1a; }
+.scroller-name .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.scroller-name .dot.on { background: #4CAF50; box-shadow: 0 0 6px #4CAF50; }
+.scroller-name .dot.off { background: #ccc; }
+.scroller-role { font-size: 12px; color: #888; margin-top: 4px; }
+.scroller-check { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; display: none; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; }
+.scroller-card.selected .scroller-check { display: flex; }
+
+/* 底部气泡 */
+.scroller-bubble { position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 8px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; max-width: 220px; white-space: nowrap; box-shadow: 0 4px 12px rgba(220,35,110,0.3); z-index: 10; animation: bubblePop .25s ease; }
+.scroller-bubble::after { content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:6px solid transparent; border-top-color:var(--primary); }
+@keyframes bubblePop { from { opacity:0; transform: translateX(-50%) translateY(6px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
+/* footer-bar 主题色 */
+.btn-primary { background: var(--primary); color:#fff; border:none; padding:12px 32px; border-radius:24px; font-size:14px; font-weight:600; cursor:pointer; transition:background .2s; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:disabled { background: #ddd; cursor:not-allowed; }
+.footer-bar { border-top:1px solid #eee; padding:24px 0; margin-top:40px; display:flex; align-items:center; justify-content:space-between; }
+.footer-bar b { color: var(--primary); font-weight:600; }</style>
+</head>
+<body class="custom-cursor">
+
+<!-- ==================== 开场 搭子入场仪式 ==================== -->
+
+
+<!-- ==================== 购物袋光标 ==================== -->
+
+<!-- ==================== PAGE 1: 选择陪伴者 ==================== -->
+<section class="page select-page active" id="page-select">
+  <h1 class="brand-title">邀请他们一起逛街吧</h1>
+  <p class="brand-sub">拿不定主意, TA 来帮你把关</p>
+
+  <div class="companion-scroller" id="scrollerRow1">
+    <div class="scroller-track" id="trackRow1"></div>
+  </div>
+  <div class="companion-scroller" id="scrollerRow2">
+    <div class="scroller-track" id="trackRow2"></div>
+  </div>
+
+  <div class="footer-bar">
+    <div class="selected-count">已选 <b id="countNum">0</b> 人</div>
+    <button class="btn-primary" id="startBtn">开始逛街 →</button>
+  </div>
+</section>
+
+
+<!-- ==================== PAGE 2: 逛街 ==================== -->
+<section class="page shop-page" id="page-shop">
+  <header class="shop-header">
+    <button class="back-btn" id="backBtn">← 返回</button>
+    <div class="shop-search"><input type="text" placeholder="搜索品牌、风格..." id="shopSearchInput"><span class="search-icon">🔍</span></div><div class="shop-tabs" id="shopTabs"></div><button class="cart-btn" id="cartBtn" title="购物车">🛒<span class="cart-count" id="cartCount">0</span></button>
+  </header>
+  <div class="shop-main">
+    <aside class="shop-sidebar" id="shopSidebar"></aside>
+    <div class="clothing-area">
+      <div class="clothing-masonry" id="clothingMasonry"></div>
+    </div>
+  </div>
+  <!-- 详情面板 -->
+  <div class="detail-overlay" id="detailOverlay" style="display:none;">
+    <div class="cart-popup" id="cartPopup"><div class="cart-header">购物车 <span class="close-cart" id="closeCart">×</span></div><div class="cart-companions"><h4>搭子随行</h4><div class="cart-companion-list" id="cartCompanions"></div></div><div class="cart-items" id="cartItems"><div class="cart-empty">还没有加入任何商品</div></div><div class="cart-footer"><div class="cart-total">合计 <b id="cartTotal">¥0</b></div><button class="cart-checkout">结算</button></div></div>
+<div class="detail-panel" id="detailPanel">
+      <div class="detail-close" id="detailClose">×</div>
+      <div class="detail-body" id="detailBody"></div>
+    </div>
+  </div>
+  <!-- 底部聊天对话框 -->
+  <div class="chat-dialog" id="chatDialog" style="display:none;">
+    <div class="chat-dialog-title" id="chatDialogTitle">跟 川久保玲 聊一聊</div>
+    <div class="chat-dialog-input-wrap">
+      <input type="text" class="chat-dialog-input" id="chatDialogInput" placeholder="想说点什么..." />
+      <button class="chat-dialog-send" id="chatDialogSend">发送</button>
+    </div>
+  </div>
+</section>
+
+
+<script>
+/* ============ 先声明 AVATARS ============ */
+const AVATARS = {
+  kawabata: `<svg viewBox="0 0 140 140">
+    <rect width="140" height="140" fill="#FAFAFA"/>
+    <polygon points="0,140 20,96 60,88 80,88 120,96 140,140" fill="#1A1A1A"/>
+    <polygon points="20,96 44,110 70,108 96,110 120,96 120,140 20,140" fill="#2C2C2C"/>
+    <polygon points="60,88 44,110 30,100 48,84" fill="#3A3A3A"/>
+    <polygon points="80,88 96,110 110,100 92,84" fill="#3A3A3A"/>
+    <polygon points="58,100 70,108 82,100 82,120 58,120" fill="#0A0A0A"/>
+    <polygon points="24,112 54,108 54,128 24,128" fill="#F4C9B0"/>
+    <polygon points="44,116 54,112 54,124 44,122" fill="#E0A88C"/>
+    <polygon points="18,100 30,92 42,100 36,116 30,122 24,116" fill="#E63946"/>
+    <polygon points="24,100 30,96 36,100 30,108" fill="#C41E3A"/>
+    <polygon points="62,78 78,78 80,100 60,100" fill="#E8B898"/>
+    <polygon points="78,78 80,100 70,100 72,82" fill="#D89878"/>
+    <polygon points="40,42 70,34 100,42 104,72 96,82 70,84 44,82 36,72" fill="#F4C9B0"/>
+    <polygon points="70,34 100,42 104,72 96,82 70,84 72,68 78,50" fill="#E0A88C"/>
+    <polygon points="44,82 70,84 96,82 88,92 70,94 52,92" fill="#D89878"/>
+    <polygon points="34,40 34,18 70,12 106,18 106,42 100,46 90,44 70,38 50,44 40,46 34,42" fill="#1A1A1A"/>
+    <polygon points="70,12 106,18 106,42 100,46 90,44 70,38" fill="#2C2C2C"/>
+    <polygon points="66,54 74,54 70,64" fill="#F8B4C4"/>
+    <polygon points="70,54 74,54 70,64" fill="#E890A4"/>
+    <circle cx="52" cy="62" r="10" fill="#F8B4C4" opacity="0.8"/>
+    <circle cx="88" cy="62" r="10" fill="#F8B4C4" opacity="0.8"/>
+    <polygon points="66,72 70,74 74,72" fill="#D89878"/>
+  </svg>`,
+  rei: `<svg viewBox="0 0 140 140">
+    <rect width="140" height="140" fill="#FAFAFA"/>
+    <polygon points="0,140 18,96 56,88 76,88 116,96 140,140" fill="#1A1A1A"/>
+    <polygon points="18,96 42,110 68,108 94,110 116,96 116,140 18,140" fill="#2C2C2C"/>
+    <polygon points="56,88 42,110 30,100 44,84" fill="#3A3A3A"/>
+    <polygon points="76,88 94,110 108,100 94,84" fill="#3A3A3A"/>
+    <circle cx="30" cy="115" r="4" fill="#fff"/>
+    <circle cx="48" cy="125" r="3.5" fill="#fff"/>
+    <circle cx="66" cy="118" r="4" fill="#fff"/>
+    <circle cx="84" cy="125" r="3.5" fill="#fff"/>
+    <circle cx="102" cy="118" r="4" fill="#fff"/>
+    <circle cx="118" cy="128" r="3.5" fill="#fff"/>
+    <circle cx="14" cy="128" r="3" fill="#fff"/>
+    <polygon points="58,78 76,78 78,100 56,100" fill="#E8B898"/>
+    <polygon points="76,78 78,100 68,100 70,82" fill="#D89878"/>
+    <polygon points="36,42 72,34 96,40 100,72 92,82 66,84 42,82 34,72" fill="#F4C9B0"/>
+    <polygon points="72,34 96,40 100,72 92,82 66,84 68,68 74,50" fill="#E0A88C"/>
+    <polygon points="42,82 66,84 92,82 84,92 66,94 48,92" fill="#D89878"/>
+    <polygon points="30,40 30,14 72,10 112,14 112,44 104,48 96,46 76,42 56,46 44,48 30,44" fill="#FFD93D"/>
+    <polygon points="72,10 112,14 112,44 104,48 96,46 76,42" fill="#E8C02D"/>
+    <circle cx="42" cy="26" r="4" fill="#1A1A1A"/>
+    <circle cx="56" cy="18" r="4" fill="#1A1A1A"/>
+    <circle cx="72" cy="22" r="3.5" fill="#1A1A1A"/>
+    <circle cx="86" cy="16" r="4" fill="#1A1A1A"/>
+    <circle cx="100" cy="26" r="4" fill="#1A1A1A"/>
+    <circle cx="50" cy="36" r="3" fill="#1A1A1A"/>
+    <circle cx="78" cy="36" r="3" fill="#1A1A1A"/>
+    <circle cx="92" cy="38" r="3" fill="#1A1A1A"/>
+    <polygon points="36,42 40,32 72,28 96,32 96,42 76,42 56,44 44,42" fill="#1A1A1A"/>
+    <polygon points="94,50 104,54 96,64" fill="#F8B4C4"/>
+    <polygon points="100,52 104,54 96,64" fill="#E890A4"/>
+    <circle cx="80" cy="62" r="10" fill="#F8B4C4" opacity="0.8"/>
+    <polygon points="86,74 90,76 94,74" fill="#D89878"/>
+  </svg>`,
+  miyake: `<svg viewBox="0 0 140 140">
+    <rect width="140" height="140" fill="#FAFAFA"/>
+    <polygon points="0,140 18,96 56,88 76,88 116,96 140,140" fill="#9A9A9A"/>
+    <polygon points="18,96 42,110 68,108 94,110 116,96 116,140 18,140" fill="#7A7A7A"/>
+    <polygon points="56,88 42,110 30,100 44,84" fill="#8A8A8A"/>
+    <polygon points="76,88 94,110 108,100 94,84" fill="#8A8A8A"/>
+    <polygon points="58,88 64,100 70,108 76,100 82,88 76,96 70,100 64,96" fill="#FAFAFA"/>
+    <polygon points="62,78 78,78 80,100 60,100" fill="#E8B898"/>
+    <polygon points="78,78 80,100 68,100 70,82" fill="#D89878"/>
+    <polygon points="42,42 70,34 98,42 102,72 94,82 70,84 46,82 38,72" fill="#F4C9B0"/>
+    <polygon points="70,34 98,42 102,72 94,82 70,84 72,68 78,50" fill="#E0A88C"/>
+    <polygon points="46,82 70,84 94,82 86,92 70,94 54,92" fill="#D89878"/>
+    <polygon points="36,40 34,18 56,8 70,10 84,8 106,18 104,40 98,44 90,42 70,38 50,42 42,44" fill="#1A1A1A"/>
+    <polygon points="70,10 84,8 106,18 104,40 98,44 90,42 70,38" fill="#2C2C2C"/>
+    <polygon points="34,18 36,40 42,44 50,42 44,28" fill="#2C2C2C"/>
+    <rect x="42" y="50" width="22" height="18" rx="9" fill="#1A1A1A"/>
+    <rect x="76" y="50" width="22" height="18" rx="9" fill="#1A1A1A"/>
+    <rect x="48" y="54" width="10" height="10" rx="5" fill="#F4C9B0"/>
+    <rect x="82" y="54" width="10" height="10" rx="5" fill="#F4C9B0"/>
+    <rect x="64" y="56" width="8" height="4" fill="#1A1A1A"/>
+    <polygon points="66,64 74,64 70,74" fill="#F8B4C4"/>
+    <polygon points="70,64 74,64 70,74" fill="#E890A4"/>
+    <circle cx="48" cy="68" r="9" fill="#F8B4C4" opacity="0.8"/>
+    <circle cx="92" cy="68" r="9" fill="#F8B4C4" opacity="0.8"/>
+    <polygon points="64,80 70,82 76,80" fill="#D89878"/>
+  </svg>`,
+  andy: `<svg viewBox="0 0 140 140">
+    <rect width="140" height="140" fill="#FAFAFA"/>
+    <polygon points="0,140 18,96 56,88 76,88 116,96 140,140" fill="#2A4870"/>
+    <polygon points="18,96 42,110 68,108 94,110 116,96 116,140 18,140" fill="#1E3A5F"/>
+    <polygon points="56,88 62,100 70,108 78,100 84,88 78,96 70,100 62,96" fill="#1A2E4A"/>
+    <polygon points="62,78 78,78 80,100 60,100" fill="#E8B898"/>
+    <polygon points="78,78 80,100 68,100 70,82" fill="#D89878"/>
+    <polygon points="42,42 70,34 98,42 102,72 94,82 66,92 42,88 38,74" fill="#F4C9B0"/>
+    <polygon points="70,34 98,42 102,72 94,82 66,92 68,76 74,56" fill="#E0A88C"/>
+    <polygon points="42,88 66,92 94,88 86,92 70,94 54,92" fill="#D89878"/>
+    <polygon points="36,40 30,24 44,14 56,6 70,4 84,6 96,14 110,24 104,40 96,44 80,38 70,34 60,38 44,44" fill="#C8C8C8"/>
+    <polygon points="70,4 84,6 96,14 110,24 104,40 96,44 80,38 70,34" fill="#9A9A9A"/>
+    <polygon points="56,6 70,4 84,6 78,18 70,16 62,18" fill="#E0E0E0"/>
+    <polygon points="30,24 36,40 42,44 40,30" fill="#A8A8A8"/>
+    <polygon points="110,24 104,40 96,44 100,30" fill="#A8A8A8"/>
+    <polygon points="36,50 42,48 42,70 36,70" fill="#E0A88C"/>
+    <polygon points="104,48 110,50 110,70 104,70" fill="#D89878"/>
+    <polygon points="64,56 76,56 70,74" fill="#F8B4C4"/>
+    <polygon points="70,56 76,56 70,74" fill="#E890A4"/>
+    <circle cx="46" cy="66" r="11" fill="#F8B4C4" opacity="0.8"/>
+    <circle cx="94" cy="66" r="11" fill="#F8B4C4" opacity="0.8"/>
+    <polygon points="62,80 78,80 78,82 62,82" fill="#D89878"/>
+  </svg>`,
+  friend: `<svg viewBox="0 0 140 140">
+    <rect width="140" height="140" fill="#FAFAFA"/>
+    <polygon points="0,140 22,96 58,88 78,88 116,96 140,140" fill="#FAFAFA"/>
+    <polygon points="22,96 46,110 72,108 98,110 116,96 116,140 22,140" fill="#EFEFEF"/>
+    <rect x="26" y="108" width="66" height="3" fill="#E63946" opacity="0.5"/>
+    <rect x="34" y="122" width="58" height="3" fill="#E63946" opacity="0.5"/>
+    <polygon points="62,78 78,78 80,100 60,100" fill="#E8B898"/>
+    <polygon points="78,78 80,100 68,100 70,82" fill="#D89878"/>
+    <polygon points="40,42 70,34 100,42 104,72 96,82 70,84 44,82 36,72" fill="#F4C9AE"/>
+    <polygon points="70,34 100,42 104,72 96,82 70,84 72,68 78,50" fill="#D8A888"/>
+    <polygon points="44,82 70,84 96,82 88,92 70,94 52,92" fill="#B88868"/>
+    <polygon points="34,40 30,18 56,10 70,12 84,10 110,18 106,40 98,44 80,38 70,34 60,38 42,44" fill="#E89DAE"/>
+    <polygon points="70,12 84,10 110,18 106,40 98,44 80,38 70,34" fill="#C87588"/>
+    <polygon points="106,40 130,48 128,118 120,124 116,116 114,78" fill="#E89DAE"/>
+    <polygon points="106,40 130,48 126,100 122,80 116,68" fill="#C87588"/>
+    <polygon points="66,54 74,54 70,64" fill="#F8B4C4"/>
+    <polygon points="70,54 74,54 70,64" fill="#E890A4"/>
+    <circle cx="52" cy="62" r="11" fill="#F8B4C4" opacity="0.8"/>
+    <circle cx="88" cy="62" r="11" fill="#F8B4C4" opacity="0.8"/>
+    <polygon points="64,80 70,82 76,80" fill="#B88868"/>
+  </svg>`,
+};
+
+/* ============ 所有 DOM 操作包进 DOMContentLoaded ============ */
+document.addEventListener("DOMContentLoaded", () => {
+
+/* ============ Splash 头像预渲染 ============ */
+  const SPLASH_LINES = [
+    { id: "kawabata", color: "#FFD93D" },
+    { id: "rei",      color: "#1A1A1A" },
+    { id: "miyake",   color: "#8A8A8A" },
+    { id: "andy",     color: "#2A4870" },
+    { id: "friend",   color: "#E89DAE" },
+  ];
+  const splashAvatars = document.getElementById("splashAvatars");
+  if (splashAvatars) {
+    SPLASH_LINES.forEach((item, i) => {
+      const imgSrc = `assets/${item.id}.png`;
+      const svgFallback = (AVATARS[item.id] || `<svg viewBox="0 0 140 140"><rect width="140" height="140" fill="${item.color}"/></svg>`).replace(/width="140" height="140"/, 'width="60" height="60"');
+      const div = document.createElement("div");
+      div.className = `splash-avatar`;
+      div.innerHTML = `<img src="${imgSrc}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><div style="position:absolute;width:100%;height:100%;display:none;">${svgFallback}</div>`;
+      splashAvatars.appendChild(div);
+    });
+  }
+
+/* ============== /* ============ 气泡对话(鼠标靠近触发) ============ */
+const avatarDebounce = {}; // 每人1秒内只触发一次
+function checkAvatarProximity(mouseX, mouseY) {
+  document.querySelectorAll(".companion-card").forEach(card => {
+    const id = card.dataset.id;
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dist = Math.hypot(mouseX - cx, mouseY - cy);
+    if (dist < 100 && !avatarDebounce[id]) {
+      avatarDebounce[id] = true;
+      showBubble(cx, rect.top - 8, id);
+      setTimeout(() => avatarDebounce[id] = false, 1800);
+    }
+  });
+}
+function showBubble(x, y, personId) {
+  const lines = BUBBLE_LINES[personId] || ["嘿,看看这里"];
+  const text = lines[Math.floor(Math.random() * lines.length)];
+  const b = document.createElement("div");
+  b.className = "bubble";
+  b.textContent = text;
+  b.style.left = x + "px";
+  b.style.top = y + "px";
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 3200);
+}
+document.addEventListener("mousemove", (e) => {
+  if (!document.body.classList.contains("splash-done")) return;
+  checkAvatarProximity(e.clientX, e.clientY);
+});
+
+/* ============ 台词库 ============ */
+const BUBBLE_LINES = {
+  kawabata: ["解构才刚刚开始", "为什么要对称?", "打破它"],
+  rei:      ["波点才是灵魂", "这件不够花", "圆点×圆点=无限"],
+  miyake:   ["它会怎么动?", "褶皱里藏着呼吸", "身体和布料的对话"],
+  andy:     ["每个人15分钟", "复制就是艺术", "这件可以量产"],
+  friend:   ["试试搭那条裤子", "颜色你衣柜里有了", "这件真的适合你"],
+};
+
+const COMPANIONS = [
+  { id: "kawabata", name: "川久保玲", role: "解构主义", online: true, img: "assets/kawabata.png" },
+  { id: "rei",      name: "草间弥生", role: "波点偏执", online: true, img: "assets/rei.png" },
+  { id: "miyake",   name: "三宅一生", role: "褶皱大师", online: true, img: "assets/miyake.png" },
+  { id: "andy",     name: "安迪·沃霍尔", role: "波普艺术", online: true, img: "assets/andy.png" },
+  { id: "meimei",   name: "小美", role: "穿搭顾问", online: true, img: "assets/haoyou (1).png" },
+  { id: "ajie",     name: "阿杰", role: "砍价高手", online: false, img: "assets/haoyou (2).png" },
+  { id: "tangtang", name: "糖糖", role: "配色达人", online: true, img: "assets/haoyou (3).png" },
+  { id: "damao",    name: "大毛", role: "极简控", online: false, img: "assets/haoyou (4).png" },
+  { id: "yoyo",     name: "YoYo", role: "潮流雷达", online: true, img: "assets/haoyou (5).png" },
+  { id: "kk",       name: "KK", role: "面料党", online: false, img: "assets/haoyou (6).png" },
+  { id: "axing",    name: "阿星", role: "混搭王", online: true, img: "assets/haoyou (7).png" },
+];
+
+let selectedIds = new Set();
+
+const CLOTHING_TABS = ["千禧派对", "怪趣知识分子", "城市漫游者"];
+const CLOTHING_DATA = {
+  "千禧派对": [
+    { name: "亮片吊带裙", designer: "FashionBrain", price: "¥899", img: "assets/qianxipaidui (1).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 284, inspiration: "千禧年MTV女星", author: "FashionBrain", authorLikes: 284, comment: "牛角造型太绝了! 年会C位预定" },
+    { name: "低腰喇叭裤", designer: "RetroQueen", price: "¥599", img: "assets/qianxipaidui (2).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 156, inspiration: "Britney Spears 2003", author: "RetroQueen", authorLikes: 156, comment: "千禧回潮正当时 快点入手" },
+    { name: "金属色短款外套", designer: "ChromeHeart", price: "¥799", img: "assets/qianxipaidui (3).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 412, inspiration: "Y2K 未来主义", author: "ChromeHeart", authorLikes: 412, comment: "这件拍照巨上镜 出片率100%" },
+    { name: "水钻露腰上衣", designer: "DiamondDust", price: "¥459", img: "assets/qianxipaidui (4).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 98, inspiration: "Paris Hilton 红毯", author: "DiamondDust", authorLikes: 98, comment: "亮片+泡泡袖 派对Queen就是你" },
+    { name: "厚底松糕鞋", designer: "PlatformPunk", price: "¥529", img: "assets/qianxipaidui (5).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 231, inspiration: "Spice Girls", author: "PlatformPunk", authorLikes: 231, comment: "我也想要一双 哪里能买" },
+    { name: "闪粉手拿包", designer: "GlitterBox", price: "¥299", img: "assets/qianxipaidui (6).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 67, inspiration: "Chanel 2000 Cruise", author: "GlitterBox", authorLikes: 67, comment: "小包太可爱了 搭什么都好看" },
+    { name: "彩色串珠项链", designer: "BeadBaby", price: "¥199", img: "assets/qianxipaidui (7).png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 189, inspiration: "Mariah Carey MV", author: "BeadBaby", authorLikes: 189, comment: "项链是整套造型的灵魂" },
+    { name: "漆皮迷你裙", designer: "VinylGirl", price: "¥689", img: "assets/qianxipaidui.png", tags: ["#千禧派对","#Y2K","#概念时装"], likes: 345, inspiration: "Christina Aguilera", author: "VinylGirl", authorLikes: 345, comment: "迷你裙+松糕鞋 辣妹风拉满" },
+  ],
+  "怪趣知识分子": [
+    { name: "格纹宽松西装", designer: "RetroQueen", price: "¥1,299", color: "#E8E0D0", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 178, inspiration: "戴珍珠耳环的少女", author: "RetroQueen", authorLikes: 156, comment: "格纹西装穿出文艺女主质感" },
+    { name: "高领针织毛衣", designer: "ChromeHeart", price: "¥529", color: "#D5D5D5", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 342, inspiration: "维吉尔·伍尔夫《一间自己的房间》", author: "ChromeHeart", authorLikes: 412, comment: "高领毛衣是知识分子标配" },
+    { name: "乐福鞋", designer: "FashionBrain", price: "¥689", color: "#8B4513", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 92, inspiration: "王家卫《重庆森林》", author: "FashionBrain", authorLikes: 284, comment: "乐福鞋太好穿了 回购第三双" },
+    { name: "羊毛围巾", designer: "DiamondDust", price: "¥359", color: "#F5DEB3", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 256, inspiration: "博尔赫斯诗集", author: "DiamondDust", authorLikes: 98, comment: "围巾质感绝了 羊绒混纺" },
+    { name: "长款毛呢大衣", designer: "PlatformPunk", price: "¥1,899", color: "#2F2F2F", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 421, inspiration: "伍迪·艾伦电影", author: "PlatformPunk", authorLikes: 231, comment: "经典款大衣 十年不过时" },
+    { name: "玳瑁框眼镜", designer: "GlitterBox", price: "¥229", color: "#A0522D", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 167, inspiration: "知识分子标配", author: "GlitterBox", authorLikes: 67, comment: "玳瑁眼镜是知识分子的武器" },
+    { name: "泡泡纱衬衫", designer: "BeadBaby", price: "¥489", color: "#FFF8DC", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 89, inspiration: "海明威《流动的盛宴》", author: "BeadBaby", authorLikes: 189, comment: "泡泡纱衬衫 文艺又随性" },
+    { name: "百褶裙", designer: "VinylGirl", price: "¥599", color: "#C0C0C0", tags: ["#怪趣知识分子","#文艺","#复古"], likes: 234, inspiration: "奥黛丽·赫本《罗马假日》", author: "VinylGirl", authorLikes: 345, comment: "赫本风百褶裙 yyds" },
+  ],
+  "城市漫游者": [
+    { name: "Oversize Tee", designer: "FashionBrain", price: "¥299", color: "#F0F0F0", tags: ["#城市漫游者","#极简","#日常"], likes: 567, inspiration: "北欧街头", author: "FashionBrain", authorLikes: 284, comment: "Oversize Tee 日常穿巨舒服" },
+    { name: "阔腿牛仔", designer: "RetroQueen", price: "¥459", color: "#4A5568", tags: ["#城市漫游者","#极简","#日常"], likes: 234, inspiration: "NYC SoHo", author: "RetroQueen", authorLikes: 156, comment: "阔腿牛子裤 显腿长神器" },
+    { name: "卡其风衣", designer: "ChromeHeart", price: "¥1,299", color: "#C4A77D", tags: ["#城市漫游者","#极简","#日常"], likes: 445, inspiration: "London Rain", author: "ChromeHeart", authorLikes: 412, comment: "卡其风衣是城市漫游者的战袍" },
+    { name: "帆布托特", designer: "DiamondDust", price: "¥329", color: "#FFFFFF", tags: ["#城市漫游者","#极简","#日常"], likes: 123, inspiration: "Tokyo Subway", author: "DiamondDust", authorLikes: 98, comment: "帆布托特 通勤万能搭" },
+    { name: "白色运动鞋", designer: "PlatformPunk", price: "¥699", color: "#FFFFFF", tags: ["#城市漫游者","#极简","#日常"], likes: 389, inspiration: "Everyday Carry", author: "PlatformPunk", authorLikes: 231, comment: "白色运动鞋 百搭不挑人" },
+    { name: "羊毛开衫", designer: "GlitterBox", price: "¥479", color: "#B8860B", tags: ["#城市漫游者","#极简","#日常"], likes: 198, inspiration: "Coffee Shop", author: "GlitterBox", authorLikes: 67, comment: "羊毛开衫 办公室空调房救命" },
+    { name: "灯芯绒长裤", designer: "BeadBaby", price: "¥389", color: "#8B4513", tags: ["#城市漫游者","#极简","#日常"], likes: 267, inspiration: "Brooklyn Streets", author: "BeadBaby", authorLikes: 189, comment: "灯芯绒长裤 复古又温暖" },
+    { name: "棒球帽", designer: "VinylGirl", price: "¥159", color: "#1A1A1A", tags: ["#城市漫游者","#极简","#日常"], likes: 456, inspiration: "Weekend Walk", author: "VinylGirl", authorLikes: 345, comment: "棒球帽一戴 气场全开" },
+  ],
+};
+const ADVISOR_LINES = {
+  "川久保玲": { "default": "解构不是破坏, 是重组。打破对称, 你会发现新的自己。", "千禧派对": "千禧的华丽和我的解构美学可以碰撞出火花。", "怪趣知识分子": "知识分子也可以有趣, 不要太严肃。", "城市漫游者": "极简是一种克制, 也是一种态度。" },
+  "草间弥生": { "default": "圆点, 圆点, 更多圆点! 我相信重复的力量。", "千禧派对": "千禧派对需要更多圆点! 亮片+圆点=魔法。", "怪趣知识分子": "知识分子也可以波点, 严肃中带点俏皮。", "城市漫游者": "城市里也可以有圆点, 那是你的信号。" },
+  "三宅一生": { "default": "褶皱是身体的延伸, 穿上它你就是流动的。", "千禧派对": "千禧派对的亮片和褶皱, 一种是光一种是影。", "怪趣知识分子": "褶皱的知性美, 是知识分子的选择。", "城市漫游者": "城市漫游者需要舒适, 褶皱是最舒适的。" },
+  "安迪·沃霍尔": { "default": "每个人都可以穿的, 就是好设计。", "千禧派对": "千禧派对就是 pop art 的延续, 色彩越多越好。", "怪趣知识分子": "知识分子也可以 pop, 打破刻板印象。", "城市漫游者": "城市里每个人都是艺术品。" },
+  "小美": { "default": "这件适合搭高腰裤, 露出最细的脚踝。", "千禧派对": "千禧派对穿搭, 亮点只能有一个。", "怪趣知识分子": "知识分子风, 关键是眼镜和毛衣。", "城市漫游者": "城市漫游者, 舒适和好看都要。" },
+  "阿杰": { "default": "¥899? 我觉得 ¥699 能拿下, 信我。", "千禧派对": "千禧派对的东西溢价高, 等打折。", "怪趣知识分子": "知识分子风不需要贵, 质感优先。", "城市漫游者": "基础款最划算, 买了不亏。" },
+  "糖糖": { "default": "粉蓝格纹+亮片, 再加一只金色耳饰就完美。", "千禧派对": "千禧派对要大胆撞色, 别怕! ", "怪趣知识分子": "知识分子风莫兰迪色最安全。", "城市漫游者": "城市漫游者黑白灰+一点亮色。" },
+  "大毛": { "default": "太花了。如果是我的话…换个素色内搭? ", "千禧派对": "千禧派对太花, 我受不了。", "怪趣知识分子": "极简知识分子, 一件毛衣一条裤。", "城市漫游者": "城市漫游者就是基础款集合。" },
+  "YoYo": { "default": "千禧回潮正当时, 这件我刷到过好几次。", "千禧派对": "千禧派对现在正当红, 快入手!", "怪趣知识分子": "知识分子风今年回潮, 值得投资。", "城市漫游者": "城市漫游风一直在线, 不会过时。" },
+  "KK": { "default": "面料是真丝混纺, 手感很好, 值得。", "千禧派对": "千禧派对的面料选厚重一点, 撑得住场面。", "怪趣知识分子": "知识分子风面料要垂, 才显高级。", "城市漫游者": "城市漫游者选耐造的面料。" },
+  "阿星": { "default": "这件可以混搭街头风, 加个帽子就好看。", "千禧派对": "千禧派对混搭街头, 反差感拉满。", "怪趣知识分子": "知识分子混搭运动, 才是现在的潮流。", "城市漫游者": "城市漫游者就是混搭王!" },
+};
+
+function avatarSVG(c, size = 140) {
+  const imgSrc = `assets/${c.id}.png`;
+  const fallback = AVATARS[c.id] || `<svg viewBox="0 0 140 140"><rect width="140" height="140" fill="#E0E0E0"/></svg>`;
+  return `<img src="${imgSrc}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><span style="display:none">${fallback}</span>`;
+}
+
+/* ============ 渲染选陪伴者页面 ============ */
+function renderSelectPage() {
+  selectedIds.clear();
+  updateFooter();
+  var row1 = document.getElementById("trackRow1");
+  var row2 = document.getElementById("trackRow2");
+  if (!row1 || !row2) { console.error("trackRow1/2 not found!"); return; }
+  row1.innerHTML = "";
+  row2.innerHTML = "";
+  var row1Data = COMPANIONS.slice(0, 6);
+  var row2Data = COMPANIONS.slice(6);
+  row1Data = row1Data.concat(row1Data);
+  row2Data = row2Data.concat(row2Data);
+  console.log("COMPANIONS count:", COMPANIONS.length, "row1:", row1Data.length, "row2:", row2Data.length);
+  row1Data.forEach(function(c) { row1.appendChild(makeCard(c)); });
+  row2Data.forEach(function(c) { row2.appendChild(makeCard(c)); });
+  console.log("row1 children:", row1.children.length, "row2 children:", row2.children.length);
+  document.querySelectorAll(".scroller-card").forEach(function(card) {
+    card.addEventListener("click", function() {
+      var id = card.dataset.id;
+      if (selectedIds.has(id)) selectedIds.delete(id);
+      else if (selectedIds.size < 5) selectedIds.add(id);
+      card.classList.toggle("selected", selectedIds.has(id));
+      updateFooter();
+    });
+    card.addEventListener("mouseenter", function() { showScrollerBubble(card); });
+    card.addEventListener("mouseleave", function() { hideScrollerBubble(card); });
+  });
+}
+
+function makeCard(c) {
+  var div = document.createElement("div");
+  div.className = "scroller-card";
+  div.dataset.id = c.id; div.dataset.name = c.name;
+  div.innerHTML =
+    '<img src="' + c.img + '" onerror="this.style.display=\'none\';var d=document.createElement(\'div\');d.style.cssText=\'width:180px;height:180px;background:#f5f5f5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;\';d.textContent=\'无图\';this.parentElement.appendChild(d);">' +
+    '<div class="scroller-name"><span class="dot ' + (c.online ? "on" : "off") + '"></span>' + c.name + '</div>' +
+    '<div class="scroller-role">' + c.role + '</div>' +
+    '<div class="scroller-check">✓</div>';
+  return div;
+}
+
+function showScrollerBubble(card) {
+  var bubble = document.createElement("div");
+  bubble.className = "scroller-bubble";
+  var name = card.dataset.name || card.querySelector(".scroller-name").textContent.trim();
+  bubble.textContent = (ADVISOR_LINES[name] && ADVISOR_LINES[name]["default"]) || "这件不错, 可以试试!";
+  card.appendChild(bubble);
+}
+
+function hideScrollerBubble(card) {
+  var b = card.querySelector(".scroller-bubble");
+  if (b) b.remove();
+}
+function toggleCompanion(c, card) {
+  if (selectedIds.has(c.id)) {
+    selectedIds.delete(c.id);
+    card.classList.remove("selected");
+  } else {
+    selectedIds.add(c.id);
+    card.classList.add("selected");
+  }
+  updateFooter();
+}
+
+function updateFooter() {
+  const count = selectedIds.size;
+  var el = document.getElementById("countNum");
+  if (el) el.textContent = count;
+  var btn = document.getElementById("startBtn");
+  if (btn) { btn.disabled = count === 0; btn.classList.toggle("enabled", count > 0); }
+}
+
+/* ============ 开始逛街 ============ */
+document.getElementById("startBtn").addEventListener("click", () => {
+  if (selectedIds.size === 0) return;
+  document.getElementById("page-select").classList.remove("active");
+  document.getElementById("page-shop").classList.add("active");
+  initShopPage();
+});
+
+/* ============ 逛街页初始化 ============ */
+let currentProductIdx = 0;
+let currentCompanions = [];
+
+let _currentTab = "千禧派对";
+let _currentDetail = null;
+let _currentChatAdvisor = null;
+
+function initShopPage() {
+  renderShopTabs();
+  renderShopSidebar();
+  renderMasonry();
+  document.getElementById("backBtn").onclick = function() { document.getElementById("page-shop").classList.remove("active"); document.getElementById("page-select").classList.add("active"); };
+  document.getElementById("detailClose").onclick = closeDetail;
+  document.getElementById("detailOverlay").onclick = function(e) { if (e.target.id === "detailOverlay") closeDetail(); };
+  document.getElementById("chatDialogSend").onclick = sendChat;
+  document.getElementById("chatDialogInput").addEventListener("keydown", function(e) { if (e.key === "Enter") sendChat(); });
+  document.addEventListener("keydown", function(e) { if (e.key === "Escape") { closeDetail(); closeChatDialog(); } });
+}
+
+function renderShopTabs() {
+  var tabs = document.getElementById("shopTabs");
+  tabs.innerHTML = "";
+  CLOTHING_TABS.forEach(function(tab) {
+    var btn = document.createElement("button");
+    btn.className = "shop-tab" + (tab === _currentTab ? " active" : "");
+    btn.textContent = tab;
+    btn.onclick = function() { _currentTab = tab; renderShopTabs(); renderMasonry(); };
+    tabs.appendChild(btn);
+  });
+}
+
+function renderShopSidebar() {
+  var sb = document.getElementById("shopSidebar");
+  sb.innerHTML = "";
+  COMPANIONS.filter(function(c) { return selectedIds.has(c.id); }).forEach(function(c) {
+    var wrap = document.createElement("div");
+    wrap.className = "mini-avatar-wrap";
+    wrap.dataset.name = c.name;
+    wrap.innerHTML = 
+      '<img class="mini-avatar" src="' + c.img + '" onerror="this.style.display=\'none\';this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23DC236E%22 width=%22100%22 height=%22100%22/></svg>\'">' +
+      '<div class="mini-name"><span class="mini-online ' + (c.online ? "on" : "off") + '"></span>' + c.name + '</div>';
+    wrap.onclick = function() {
+      if (!window._detailOpen) return;
+      setActiveAdvisor(wrap, c.name);
+      openChatDialog(c.name);
+    };
+    sb.appendChild(wrap);
+  });
+}
+
+function setActiveAdvisor(wrap, name) {
+  var avatars = document.querySelectorAll("#shopSidebar .mini-avatar");
+  avatars.forEach(function(a) { a.classList.remove("active"); });
+  var target = wrap.querySelector(".mini-avatar");
+  if (target) target.classList.add("active");
+}
+
+function renderMasonry() {
+  var m = document.getElementById("clothingMasonry");
+  m.innerHTML = "";
+  var items = CLOTHING_DATA[_currentTab] || [];
+  items.forEach(function(item) {
+    var card = document.createElement("div");
+    card.className = "clothing-card";
+    var imgBlock = item.img ? 
+      '<img class="cc-img" src="' + item.img + '" alt="' + item.name + '">' : 
+      '<div class="cc-img-placeholder" style="background:' + (item.color || '#eee') + '">' + item.name + '</div>';
+    card.innerHTML = imgBlock +
+      '<div class="cc-name-price">' +
+        '<div class="cc-name-price-bg">' +
+          '<div class="cc-name-line">' + item.name + '<div class="cc-price">' + item.price + '</div></div>' +
+          '<div class="cc-hot-comment">💬 ' + item.comment + '</div>' +
+        '</div>' +
+      '</div>';
+    card.onclick = function() { openDetail(item); };
+    m.appendChild(card);
+  });
+}
+
+function openDetail(item) {
+  _currentDetail = item;
+  window._detailOpen = true;
+  var body = document.getElementById("detailBody");
+  var imgHtml = item.img ? 
+    '<img class="detail-img" src="' + item.img + '">' : 
+    '<div class="detail-img" style="aspect-ratio:3/4;background:' + (item.color || '#eee') + ';display:flex;align-items:center;justify-content:center;color:#fff;border-radius:8px;">' + item.name + '</div>';
+  body.innerHTML = imgHtml +
+    '<div class="detail-name">' + item.name + '</div>' +
+    '<div class="detail-author">' +
+      '<div class="detail-author-avatar"></div>' +
+      '<span class="detail-author-name">' + item.author + '</span>' +
+      '<button class="detail-follow-btn">+ 关注</button>' +
+    '</div>' +
+    '<div class="detail-inspire">灵感来源：' + item.inspiration + '</div>' +
+    '<div class="detail-price">' + item.price + '</div>' +
+    '<div class="detail-tags">' + item.tags.map(function(t){return '<span class="detail-tag">' + t + '</span>';}).join('') + '</div>' +
+    '<div class="detail-desc-title" style="font-weight:600;">详细介绍</div>' +
+    '<div class="detail-desc">从MTV舞台夸张视觉提取, 牛角廓形+粉蓝格纹, 适合派对红毯, 充气感立体泡泡袖。</div>' +
+    '<div class="detail-actions">' +
+      '<div class="detail-action"><span class="num">♥ ' + item.likes + '</span>点赞</div>' +
+      '<div class="detail-action"><span class="num">★ 112</span>收藏</div>' +
+      '<div class="detail-action"><span class="num">💬 34</span>评论</div>' +
+    '</div>' +
+    '<div class="detail-comments">' +
+      '<div class="detail-comment"><b>ChromeHeart</b>：牛角太绝了! 能不能出黑色版本?</div>' +
+      '<div class="detail-comment"><b>PlatformPunk</b>：我想用这个廓形换配色。</div>' +
+      '<input class="detail-comment-input" placeholder="写下你的想法..."/>' +
+      '<button class="detail-comment-send" onclick="postComment(this)">发送</button>' +
+    '</div>';
+  document.getElementById("detailOverlay").style.display = "flex";
+      showFirstAdvisorTip("如果纠结可以找我聊聊", 4000);
+}
+
+
+    function showFirstAdvisorTip(text, duration) {
+      var sidebar = document.getElementById("shopSidebar");
+      if (!sidebar) return;
+      var firstAvatar = sidebar.querySelector(".mini-avatar-wrap");
+      if (!firstAvatar) return;
+      document.querySelectorAll(".advisor-bubble.tip").forEach(function(b) { b.remove(); });
+      var rect = firstAvatar.getBoundingClientRect();
+      var bubble = document.createElement("div");
+      bubble.className = "advisor-bubble tip";
+      bubble.textContent = text;
+      bubble.style.left = (rect.right + 12) + "px";
+      bubble.style.top = (rect.top + rect.height / 2 - 15) + "px";
+      document.body.appendChild(bubble);
+      setTimeout(function() { if (bubble.parentNode) bubble.parentNode.removeChild(bubble); }, duration || 4000);
+    }function closeDetail() {
+  document.getElementById("detailOverlay").style.display = "none";
+  window._detailOpen = false;
+  closeChatDialog();
+}
+
+function openChatDialog(name) {
+  _currentChatAdvisor = name;
+  var dlg = document.getElementById("chatDialog");
+  dlg.style.display = "flex";
+  dlg.querySelector("#chatDialogTitle").innerHTML = '跟 <span style="color:#DC236E">' + name + '</span> 聊一聊';
+  dlg.querySelector("#chatDialogInput").value = "";
+  setTimeout(function() { dlg.querySelector("#chatDialogInput").focus(); }, 100);
+}
+
+function closeChatDialog() {
+  document.getElementById("chatDialog").style.display = "none";
+  _currentChatAdvisor = null;
+  document.querySelectorAll(".advisor-bubble").forEach(function(b) { b.remove(); });
+}
+
+function sendChat() {
+  var input = document.getElementById("chatDialogInput");
+  var text = input.value.trim();
+  if (!text || !_currentChatAdvisor) return;
+  input.value = "";
+  var reply = generateAdvisorReply(_currentChatAdvisor, text);
+  showAdvisorBubble(_currentChatAdvisor, reply);
+}
+
+function generateAdvisorReply(name, userText) {
+  var tab = _currentTab;
+  var lines = ADVISOR_LINES[name];
+  var base = (lines && lines[tab]) || (lines && lines["default"]) || "这件不错, 可以试试!";
+  var kw = "";
+  if (/好看|漂亮|美|赞/.test(userText)) kw = " 我也觉得, 这种风格很适合你!";
+  else if (/搭配|怎么穿|配什么/.test(userText)) kw = " 建议搭高腰裤, 露出最细的脚踝。";
+  else if (/价格|贵|便宜|钱/.test(userText)) kw = " 等打折吧, 这个季节末会有活动。";
+  else if (/颜色|色系/.test(userText)) kw = " 再加一只金色耳饰就完美了。";
+  else if (/风格|潮流|流行/.test(userText)) kw = " 千禧回潮正当时, 快入手!";
+  return base + kw;
+}
+
+function showAdvisorBubble(name, text) {
+  var sidebar = document.getElementById("shopSidebar");
+  if (!sidebar) return;
+  var wraps = sidebar.querySelectorAll(".mini-avatar-wrap");
+  var target = null;
+  wraps.forEach(function(w) { if (w.dataset.name === name) target = w; });
+  if (!target) return;
+  var rect = target.getBoundingClientRect();
+  var bubble = document.createElement("div");
+  bubble.className = "advisor-bubble";
+  document.body.appendChild(bubble);
+  bubble.style.left = (rect.right + 12) + "px";
+  bubble.style.top = (rect.top + rect.height / 2 - 15) + "px";
+  var i = 0;
+  bubble.textContent = "";
+  var typing = setInterval(function() {
+    if (i < text.length) { bubble.textContent += text[i]; i++; }
+    else {
+      clearInterval(typing);
+      setTimeout(function() { if (bubble.parentNode) bubble.parentNode.removeChild(bubble); }, 5000);
+    }
+  }, 40);
+}
+
+function postComment(btn) {
+  var input = btn.previousElementSibling;
+  if (!input.value.trim()) return;
+  var c = document.createElement("div");
+  c.className = "detail-comment";
+  c.innerHTML = "<b>我</b>：" + input.value;
+  btn.parentNode.insertBefore(c, input);
+  input.value = "";
+}
+/* ============ 启动 ============ */
+renderSelectPage();
+
+}); // end outer DOMContentLoaded
+</script></body></html>
