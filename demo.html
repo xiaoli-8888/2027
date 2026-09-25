@@ -952,117 +952,59 @@
 .shop-sidebar { width:120px; display:flex; flex-direction:column; gap:24px; padding-top:72px; position:relative; }
 /* ===== 娲炴礊鏉挎湇瑁呭睍绀哄尯 ===== */
 /* ===== 纯白背景 + 拼贴商品展示区 ===== */
+/* ===== 鏈嶈灞曠ず鍖?- 鐎戝竷娴?鍒?===== */
 .clothing-area {
   flex:1;
   position:relative;
-  background:#ffffff;
-  border-radius:6px;
+  background:transparent;
   min-height:calc(100vh - 130px);
   overflow:hidden;
 }
-.clothing-masonry { position:relative; width:100%; min-height:calc(100vh - 170px); padding:40px 30px; box-sizing:border-box; }
+.clothing-masonry {
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  width:100%;
+  padding:20px 0;
+  box-sizing:border-box;
+}
 
 .clothing-card {
-  position:absolute;
-  width:280px;
+  width:calc(25% - 15px);
   background:transparent;
   cursor:pointer;
-  transform-origin: top center;
+  position:relative;
   transition: transform .3s ease;
 }
 .clothing-card:hover {
-  animation: cardSwing 0.7s ease-in-out infinite;
+  transform: translateY(-4px);
   z-index:50;
 }
-@keyframes cardSwing {
-  0%, 100% { transform: rotate(var(--rot, 0deg)); }
-  25% { transform: rotate(calc(var(--rot, 0deg) - 1.5deg)); }
-  75% { transform: rotate(calc(var(--rot, 0deg) + 1.5deg)); }
-}
-/* 商品图 - 透明PNG直接展示 */
-.clothing-card .cc-img { width:100%; height:auto; display:block; position:relative; z-index:1; }
-.clothing-card .cc-img-placeholder { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:rgba(0,0,0,0.3); font-size:12px; position:relative; z-index:1; }
+.clothing-card .cc-img { width:100%; height:auto; display:block; }
+.clothing-card .cc-img-placeholder { width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:rgba(0,0,0,0.3); font-size:12px; }
 
-/* ===== 半透明胶带贴角 ===== */
-.cc-tape {
-  position:absolute;
-  width:60px;
-  height:18px;
-  background:rgba(255,255,255,0.5);
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  clip-path: polygon(0 8%, 4% 0, 96% 12%, 100% 0, 100% 88%, 96% 100%, 4% 92%, 0 100%);
-  z-index:5;
-  pointer-events:none;
-}
-/* 胶带中间横向高光线 */
-.cc-tape::after {
-  content:"";
-  position:absolute;
-  top:50%;
-  left:6%;
-  right:6%;
-  height:1px;
-  background:rgba(255,255,255,0.6);
-  transform:translateY(-50%);
-}
-/* 左上角胶带 */
-.cc-tape.left-top {
-  top:-9px;
-  left:-22px;
-}
-/* 右上角胶带 */
-.cc-tape.right-top {
-  top:-9px;
-  right:-22px;
-}
-
-/* ===== emoji 表情贴纸 ===== */
+/* emoji 琛ㄦ儏璐寸焊 */
 .cc-emoji-sticker {
   position:absolute;
-  font-size:32px;
+  font-size:28px;
   cursor:pointer;
   z-index:6;
   transition: transform .2s ease;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
 }
-.cc-emoji-sticker:hover {
-  transform: scale(1.25) rotate(-5deg);
-}
-/* hover 显示的评论气泡 */
+.cc-emoji-sticker:hover { transform: scale(1.25) rotate(-5deg); }
 .cc-emoji-sticker .emoji-bubble {
-  display:none;
-  position:absolute;
-  bottom:calc(100% + 8px);
-  left:50%;
-  transform:translateX(-50%);
-  background:#fffef5;
-  border:1.5px dashed #c9b99a;
-  border-radius:10px;
-  padding:8px 12px;
-  font-size:12px;
-  color:#5a4a2a;
-  line-height:1.5;
-  white-space:normal;
-  width:max-content;
-  max-width:200px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.12);
-  z-index:100;
-  pointer-events:none;
+  display:none; position:absolute; bottom:calc(100% + 8px); left:50%;
+  transform:translateX(-50%); background:#fffef5; border:1.5px dashed #c9b99a;
+  border-radius:10px; padding:8px 12px; font-size:12px; color:#5a4a2a;
+  line-height:1.5; white-space:normal; width:max-content; max-width:200px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.12); z-index:100; pointer-events:none;
 }
 .cc-emoji-sticker .emoji-bubble::after {
-  content:"";
-  position:absolute;
-  top:100%;
-  left:50%;
-  transform:translateX(-50%);
-  border:6px solid transparent;
-  border-top-color:#c9b99a;
+  content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:6px solid transparent; border-top-color:#c9b99a;
 }
-.cc-emoji-sticker:hover .emoji-bubble {
-  display:block;
-}
+.cc-emoji-sticker:hover .emoji-bubble { display:block; }
 /* 搭子侧栏头像 */
 .shop-sidebar .mini-avatar-wrap { position:relative; width:108px; }
 .shop-sidebar .mini-avatar { width:108px; height:108px; border-radius:50%; object-fit:cover; cursor:pointer; transition:all .3s; filter:none; opacity:1; position:relative; z-index:201; }
@@ -1617,62 +1559,27 @@ function renderMasonry() {
   var m = document.getElementById("clothingMasonry");
   m.innerHTML = "";
   var items = CLOTHING_DATA[_currentTab] || [];
-  var EMOJIS = ["😆","😎","🤩","🥰","😜","🤔","😍","🤣","🥳","😏","😋","🤗"];
-  // 拼贴布局：4+4 两行，间距放宽，轻微重叠
-  var layouts = [
-    { left: 0,  top: 2,  rot: -2 },
-    { left: 25, top: 0,  rot: 2 },
-    { left: 50, top: 3,  rot: -1 },
-    { left: 75, top: 1,  rot: 2 },
-    { left: 8,  top: 44, rot: 1 },
-    { left: 33, top: 42, rot: -2 },
-    { left: 58, top: 45, rot: 1 },
-    { left: 83, top: 43, rot: -1 },
-  ];
+  var EMOJIS = ["馃槅","馃槑","馃ぉ","馃グ","馃槣","馃","馃槏","馃ぃ","馃コ","馃槒","馃構","馃"];
   items.forEach(function(item, i) {
     var card = document.createElement("div");
     card.className = "clothing-card";
-    var pos = i < layouts.length ? layouts[i] : {
-      left: ((i * 25) % 75) + 2,
-      top: ((i * 22) % 45) + 44,
-      rot: ((i % 5) - 2) * 1.5
-    };
-    card.style.left = pos.left + "%";
-    card.style.top = pos.top + "%";
-    card.style.setProperty("--rot", pos.rot + "deg");
-    card.style.transform = "rotate(" + pos.rot + "deg)";
 
     var imgBlock = item.img ?
       '<img class="cc-img" src="' + item.img + '" alt="' + item.name + '">' :
       '<div class="cc-img-placeholder" style="background:' + (item.color || '#eee') + '">' + item.name + '</div>';
 
-    // 胶带：1/3 概率右上角，否则左上角；旋转±3°；透明度0.45~0.6
-    var tapeSide = Math.random() < 0.33 ? "right-top" : "left-top";
-    var baseRot = tapeSide === "right-top" ? 45 : -45;
-    var tapeRot = baseRot + (Math.random() * 6 - 3);
-    var tapeOpacity = 0.45 + Math.random() * 0.15;
-    var tapeHtml = '<div class="cc-tape ' + tapeSide + '" style="transform:rotate(' + tapeRot + 'deg);opacity:' + tapeOpacity + ';"></div>';
+    // emoji 璐寸焊锛? 涓紝hover 鏄剧ず璇勮
+    var emo = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    var sl = 60 + Math.random() * 25;
+    var st = 5 + Math.random() * 10;
+    var stickerHtml = '<div class="cc-emoji-sticker" style="left:' + sl + '%;top:' + st + '%;">' +
+      emo + '<div class="emoji-bubble">' + item.comment + '</div></div>';
 
-    // emoji 贴纸：1~2 个，hover 显示评论
-    var stickerCount = Math.random() < 0.5 ? 1 : 2;
-    var stickerHtml = "";
-    var usedPos = [];
-    for (var s = 0; s < stickerCount; s++) {
-      var emo = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-      // 位置：商品下方或侧方空隙
-      var sl, st;
-      if (s === 0) { sl = 8 + Math.random() * 30; st = 75 + Math.random() * 10; }
-      else { sl = 55 + Math.random() * 30; st = 70 + Math.random() * 15; }
-      stickerHtml += '<div class="cc-emoji-sticker" style="left:' + sl + '%;top:' + st + '%;">' +
-        emo + '<div class="emoji-bubble">' + item.comment + '</div></div>';
-    }
-
-    card.innerHTML = tapeHtml + imgBlock + stickerHtml;
+    card.innerHTML = imgBlock + stickerHtml;
     card.onclick = function() { openDetail(item); };
     m.appendChild(card);
   });
 }
-
 function openDetail(item) {
   _currentDetail = item;
   window._detailOpen = true;
