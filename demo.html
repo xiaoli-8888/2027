@@ -1028,6 +1028,44 @@
 .cc-emoji-sticker .emoji-bubble { display:none; position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:#fffef5; border:1.5px dashed #c9b99a; border-radius:10px; padding:8px 12px; font-size:12px; color:#5a4a2a; line-height:1.5; white-space:normal; width:max-content; max-width:200px; box-shadow:0 4px 12px rgba(0,0,0,0.12); z-index:100; pointer-events:none; }
 .cc-emoji-sticker .emoji-bubble::after { content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:6px solid transparent; border-top-color:#c9b99a; }
 .cc-emoji-sticker:hover .emoji-bubble { display:block; }
+/* 弹幕容器 - hover时显示 */
+.cc-danmaku-layer {
+  display:none;
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:20;
+}
+.clothing-card:hover .cc-danmaku-layer { display:block; }
+
+/* 单条弹幕 */
+.cc-danmaku-item {
+  position:absolute;
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(0,0,0,0.75);
+  border-radius:16px;
+  padding:3px 12px 3px 4px;
+  color:#fff;
+  font-size:12px;
+  line-height:1.4;
+  animation: dmScroll linear forwards;
+}
+.cc-danmaku-item img,
+.cc-danmaku-item .dm-avatar {
+  width:20px; height:20px; border-radius:50%; flex-shrink:0; object-fit:cover;
+}
+.cc-danmaku-item .dm-avatar-placeholder {
+  width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff;
+}
+@keyframes dmScroll {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+
 /* 搭子侧栏头像 */
 .shop-sidebar .mini-avatar-wrap { position:relative; width:108px; }
 .shop-sidebar .mini-avatar { width:108px; height:108px; border-radius:50%; object-fit:cover; cursor:pointer; transition:all .3s; filter:none; opacity:1; position:relative; z-index:201; }
@@ -1585,11 +1623,11 @@ function setActiveAdvisor(wrap, name) {
   if (target) target.classList.add("active");
 }
 
+// renderMasonry with danmaku - UTF-8 encoded
 function renderMasonry() {
   var m = document.getElementById("clothingMasonry");
   m.innerHTML = "";
   var items = CLOTHING_DATA[_currentTab] || [];
-
   items.forEach(function(item, i) {
     var card = document.createElement("div");
     card.className = "clothing-card";
@@ -1610,13 +1648,60 @@ function renderMasonry() {
       priceHtml = '<span class="cc-price-old">\u00A5' + oldP + '</span>' + priceHtml;
     }
 
-    card.innerHTML = imgBlock +
+    var danmakuLayer = '<div class="cc-danmaku-layer" id="dm-' + i + '"></div>';
+
+    card.innerHTML = imgBlock + danmakuLayer +
       '<div class="cc-info">' +
         '<div class="cc-name">' + item.name + '</div>' +
         '<div class="cc-stars">' + stars + '</div>' +
         '<div class="cc-price-row">' + priceHtml + '</div>' +
       '</div>';
-    card.onclick = function() { openDetail(item); };
+
+    (function(cardEl, layerId, itemData) {
+      cardEl.addEventListener('mouseenter', function() {
+        var layer = document.getElementById(layerId);
+        if (!layer || layer.dataset.started) return;
+        layer.dataset.started = '1';
+        var comments = [
+          { name: itemData.author, text: itemData.comment },
+          { name: 'ChicGirl', text: '\u7248\u578b\u504f\u5c0f \u5efa\u8bae\u5927\u4e00\u53f7' },
+          { name: 'TrendSpot', text: '\u6027\u4ef7\u6bd4\u4e00\u822c \u4f46\u8bbe\u8ba1\u611f\u62c9\u6ee1' },
+          { name: 'ClosetEdit', text: '\u8fd9\u4e2a\u914d\u8272\u7edd\u4e86 \u5de8\u663e\u767d' },
+          { name: 'StyleCritic', text: '\u9762\u6599\u6709\u70b9\u786c \u6d17\u540e\u4f1a\u8f6f' },
+          { name: 'FashionLab', text: '\u56de\u5934\u7387200% \u4eb2\u6d4b' },
+          { name: 'BuyerNote', text: '\u642d\u9ad8\u8170\u88e4+\u8001\u7239\u978b=\u7edd\u914d' },
+          { name: 'RealReview', text: '\u5b9e\u7269\u6bd4\u56fe\u597d\u770b \u4e0d\u4e8f' }
+        ];
+        var colors = ['#FF6B9D','#6A5ACD','#26A69A','#FF9800','#7E57C2','#EC407A','#5C6BC0','#AB47BC'];
+        var idx = 0;
+        function spawn() {
+          if (!layer.parentNode) return;
+          var c = comments[idx % comments.length];
+          idx++;
+          var dm = document.createElement('div');
+          dm.className = 'cc-danmaku-item';
+          var avatarHtml = '<div class="dm-avatar-placeholder" style="background:' + colors[idx % colors.length] + '">' + c.name.charAt(0) + '</div>';
+          dm.innerHTML = avatarHtml + '<span><b style="opacity:0.7">' + c.name + '</b> ' + c.text + '</span>';
+          var top = (idx * 30) % 80;
+          dm.style.top = top + 'px';
+          var dur = 4 + Math.random() * 3;
+          dm.style.animationDuration = dur + 's';
+          dm.style.left = '100%';
+          layer.appendChild(dm);
+          setTimeout(function() { if (dm.parentNode) dm.parentNode.removeChild(dm); }, dur * 1000);
+        }
+        spawn();
+        var timer = setInterval(spawn, 800);
+        layer._timer = timer;
+      });
+      cardEl.addEventListener('mouseleave', function() {
+        var layer = document.getElementById(layerId);
+        if (layer && layer._timer) { clearInterval(layer._timer); layer._timer = null; }
+        if (layer) { layer.innerHTML = ''; layer.dataset.started = ''; }
+      });
+      cardEl.onclick = function() { openDetail(itemData); };
+    })(card, 'dm-' + i, item);
+
     m.appendChild(card);
   });
 }
