@@ -1589,7 +1589,7 @@ function renderMasonry() {
   var m = document.getElementById("clothingMasonry");
   m.innerHTML = "";
   var items = CLOTHING_DATA[_currentTab] || [];
-  var EMOJIS = ["\uD83D\uDE06","\uD83D\uDE0E","\uD83E\uDD29","\uD83E\uDD70","\uD83D\uDE1C","\uD83E\uDD14","\uD83D\uDE0D","\uD83E\uDD23","\uD83E\uDD73","\uD83D\uDE0F","\uD83D\uDE0B","\uD83E\uDD17"];
+
   items.forEach(function(item, i) {
     var card = document.createElement("div");
     card.className = "clothing-card";
@@ -1610,11 +1610,7 @@ function renderMasonry() {
       priceHtml = '<span class="cc-price-old">\u00A5' + oldP + '</span>' + priceHtml;
     }
 
-    var emo = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-    var stickerHtml = '<div class="cc-emoji-sticker" style="right:8px;top:8px;">' +
-      emo + '<div class="emoji-bubble">' + item.comment + '</div></div>';
-
-    card.innerHTML = imgBlock + stickerHtml +
+    card.innerHTML = imgBlock +
       '<div class="cc-info">' +
         '<div class="cc-name">' + item.name + '</div>' +
         '<div class="cc-stars">' + stars + '</div>' +
