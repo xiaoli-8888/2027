@@ -7,6 +7,7 @@
 <script src="fflate.js?v=5"></script>
 <script src="EXRLoader.js?v=5"></script>
 <script src="sky_model.js?v=5"></script>
+  <script src="paper_tex.js"></script>
 <script>
 // 精简 GLB 加载器（内联，支持贴图纹理）
 function loadGLB(url, onLoad, onError) {
@@ -179,7 +180,7 @@ function loadGLB(url, onLoad, onError) {
   }).catch(onError || function(e){ console.error('GLB load error', e); });
 }
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=Caveat:wght@400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.font.im/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=Caveat:wght@400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style id="theme-vars">
   :root {
     --bg: #FAFAFA;
@@ -1457,7 +1458,7 @@ function loadGLB(url, onLoad, onError) {
   margin-bottom: 8px;
 }
 .intro-card-text .cn-text {
-  font-family: 'Ma Shan Zheng', cursive;
+  font-family: 'Ma Shan Zheng', 'STXingkai', 华文行楷, 'STKaiti', 楷体, cursive;
   font-size: 28px;
   color: #000000;
   line-height: 1.4;
@@ -2207,22 +2208,11 @@ renderSelectPage();
 
   // ===== Three.js 场景 =====
   var scene = new THREE.Scene();
-  // 加载 EXR 天空背景
-  (function () {
-    var _sb64 = SKY_EXR_BASE64;
-    var _sbin = atob(_sb64);
-    var _sbuf = new Uint8Array(_sbin.length);
-    for (var i = 0; i < _sbin.length; i++) _sbuf[i] = _sbin.charCodeAt(i);
-    new THREE.EXRLoader().parse(_sbuf.buffer, '', function (tex) {
-      tex.mapping = THREE.EquirectangularReflectionMapping;
-      tex.colorSpace = THREE.SRGBColorSpace;
-      scene.background = tex;
-      console.log('[sky] EXR loaded');
-    }, function (e) { console.error('[sky] EXR parse error', e); });
-  })();
+  // 纯色背景（与地面蓝绿色一致）
+  scene.background = new THREE.Color(0x40B8E8);
   var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 4.5, 7);
-  camera.lookAt(0, 2, -6);
+  camera.position.set(0, 5, 4);
+  camera.lookAt(0, 0, -4);
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -2313,16 +2303,33 @@ renderSelectPage();
 
   // ===== 卡片纹理：纯白圆角纸卡（无边框、无箭头、无文字） =====
   var cardTex;
+  var cardTexClones = [];
   function makeCardTexture() {
     var c = document.createElement('canvas');
     c.width = 1024; c.height = 1365;
     var ctx = c.getContext('2d');
-    // 白底圆角
     ctx.fillStyle = '#ffffff';
     roundRect(ctx, 10, 10, 1004, 1345, 60);
     ctx.fill();
     var tex = new THREE.CanvasTexture(c);
     tex.colorSpace = THREE.SRGBColorSpace;
+    var img = new Image();
+    img.onload = function() {
+      ctx.save();
+      roundRect(ctx, 10, 10, 1004, 1345, 60);
+      ctx.clip();
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.globalAlpha = 0.7;
+      ctx.drawImage(img, 10, 10, 1004, 1345);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.restore();
+      tex.needsUpdate = true;
+      for (var ci = 0; ci < cardTexClones.length; ci++) {
+        cardTexClones[ci].needsUpdate = true;
+      }
+    };
+    img.src = PAPER_TEX_DATA;
     return tex;
   }
   function roundRect(ctx, x, y, w, h, r) {
@@ -2341,9 +2348,9 @@ renderSelectPage();
 
   cardTex = makeCardTexture();
 
-  // ===== 白色纸张材质（MeshBasicMaterial 确保纯白，不受光照影响） =====
   function makePaperMat(uOffset) {
     var t = cardTex.clone();
+    cardTexClones.push(t);
     t.wrapS = THREE.ClampToEdgeWrapping;
     t.wrapT = THREE.ClampToEdgeWrapping;
     t.offset.set(uOffset, 0);
@@ -2355,12 +2362,11 @@ renderSelectPage();
     });
   }
 
-  // 左半显示纹理左半边(u 0~0.5)，右半显示右半边(u 0.5~1)
+  // left half shows u 0~0.5, right half shows u 0.5~1
   var cardMatL = makePaperMat(0);
   var cardMatR = makePaperMat(0.5);
-
   // ===== 卡片：左右两半（用于对折动画） =====
-  var cardW = 2.4, cardH = 3.2;
+  var cardW = 1.8, cardH = 2.4;
   var halfW = cardW / 2;
 
   var cardRoot = new THREE.Group();
@@ -2467,6 +2473,31 @@ renderSelectPage();
   foldLine.position.z = 0.001;
   planeRoot.add(foldLine);
 
+  // ===== 瑁呴グ绾搁鏈猴紙澶╃┖椋樻诞锛?=====
+  var skyPlanes = [];
+  var skyData2 = [
+    { dir: 1, y: 3.3, z: -1.5, phase: 0 },
+    { dir: -1, y: 4, z: -2.5, phase: 2.5, mode: 'dive' }
+  ];
+  for (var si = 0; si < skyData2.length; si++) {
+    var sd = skyData2[si];
+    var spG = new THREE.Group();
+    var spL = new THREE.Group();
+    spG.add(spL);
+    spL.add(new THREE.Mesh(new THREE.ShapeGeometry(leftShape), makeWhiteMat()));
+    var spR = new THREE.Group();
+    spG.add(spR);
+    spR.add(new THREE.Mesh(new THREE.ShapeGeometry(rightShape), makeWhiteMat()));
+    spL.rotation.y = -0.55;
+    spR.rotation.y = 0.55;
+    spG.scale.setScalar(0.2);
+    spG.rotation.z = sd.dir > 0 ? -Math.PI / 2 : Math.PI / 2;
+    spG.rotation.x = 0.15;
+    spG.position.set(sd.dir > 0 ? -8 : 8, sd.y, sd.z);
+    scene.add(spG);
+    skyPlanes.push({ obj: spG, dir: sd.dir, baseY: sd.y, zPos: sd.z, phase: sd.phase, progress: 0, mode: sd.mode });
+  }
+
   // ===== 状态机 =====
   var STATE = { SLIDE_IN: 0, IDLE: 1, FOLDING: 2, FLYING: 3, DONE: 4 };
   var state = STATE.SLIDE_IN;
@@ -2528,10 +2559,10 @@ renderSelectPage();
 
   // 贝塞尔飞行路径：直接向上飞出屏幕
   var flyPath = [
-    new THREE.Vector3(0, 0, 0),           // 起点
-    new THREE.Vector3(0, 3, 0),           // 向上
-    new THREE.Vector3(0, 6.5, 0),         // 继续向上
-    new THREE.Vector3(0, 11, 0)           // 飞出屏幕顶部
+    new THREE.Vector3(0, 1.8, 0),        // 起点（与卡片位置一致）
+    new THREE.Vector3(0, 4.5, 0),         // 
+    new THREE.Vector3(0, 8, 0),           // 
+    new THREE.Vector3(0, 13, 0)           // 
   ];
   function bezierPoint(p0, p1, p2, p3, t) {
     var u = 1 - t;
@@ -2612,7 +2643,7 @@ renderSelectPage();
 
     // 纸飞机淡入 + 放大
     planeRoot.visible = a > 0.05;
-    planeRoot.scale.setScalar(a);
+    planeRoot.scale.setScalar(a * 0.6);
     planeMatL.opacity = a;
     planeMatR.opacity = a;
     foldLineMat.opacity = a * 0.6;
@@ -2639,45 +2670,20 @@ renderSelectPage();
 
   // ===== 动画循环 =====
   var clock = new THREE.Clock();
-  // ===== 城市手动拖拽旋转 =====
-  var cityRotY = 0;      // 水平旋转角度
-  var cityRotX = -0.1;   // 初始倾斜（接近平视）
-  var isDragging = false;
-  var lastX = 0, lastY = 0;
-  var rotVelocityY = 0, rotVelocityX = 0;
+  // ===== 城市固定角度 + 滚轮缩放 =====
+  var camZoom = 0;       // 水平旋转角度
+  var cityRotX = -0.35;  // 初始倾斜（接近平视）
+  
+  
+  
 
-  function onPointerDown(e) {
-    isDragging = true;
-    var p = e.touches ? e.touches[0] : e;
-    lastX = p.clientX;
-    lastY = p.clientY;
-    rotVelocityY = 0;
-    rotVelocityX = 0;
-  }
-  function onPointerMove(e) {
-    if (!isDragging) return;
-    var p = e.touches ? e.touches[0] : e;
-    var dx = p.clientX - lastX;
-    var dy = p.clientY - lastY;
-    lastX = p.clientX;
-    lastY = p.clientY;
-    rotVelocityY = dx * 0.005;
-    rotVelocityX = dy * 0.005;
-    cityRotY += rotVelocityY;
-    cityRotX += rotVelocityX;
-    // 限制垂直旋转角度
-    cityRotX = Math.max(-1.2, Math.min(0.3, cityRotX));
-  }
-  function onPointerUp() {
-    isDragging = false;
-  }
 
-  canvas.addEventListener('mousedown', onPointerDown);
-  window.addEventListener('mousemove', onPointerMove);
-  window.addEventListener('mouseup', onPointerUp);
-  canvas.addEventListener('touchstart', onPointerDown, { passive: true });
-  window.addEventListener('touchmove', onPointerMove, { passive: true });
-  window.addEventListener('touchend', onPointerUp);
+  window.addEventListener('wheel', function (e) { e.preventDefault(); camZoom += e.deltaY * 0.003; camZoom = Math.max(-3, Math.min(3, camZoom)); }, { passive: false });
+  
+  
+  
+  
+  
 
   function animate() {
     requestAnimationFrame(animate);
@@ -2685,20 +2691,18 @@ renderSelectPage();
     var t = clock.getElapsedTime();
 
     // 拖拽旋转 + 松手后惯性衰减 + 缓慢自动浮动
-    if (!isDragging) {
-      cityRotY += rotVelocityY;
-      cityRotX += rotVelocityX;
-      rotVelocityY *= 0.95;
-      rotVelocityX *= 0.95;
-      cityRotX = Math.max(-1.2, Math.min(0.3, cityRotX));
+    mapGroup.rotation.y = 0; camera.position.z = 4 - camZoom; camera.lookAt(0, 0, -4); if (cardRoot) { cardRoot.quaternion.copy(camera.quaternion); cardRoot.rotateZ(Math.sin(t * 1.2) * 0.01); }
+        mapGroup.rotation.x = cityRotX;
+    for (var si2 = 0; si2 < skyPlanes.length; si2++) {
+      var sp2 = skyPlanes[si2];
+      sp2.progress += dt * 0.12; if (sp2.progress > 1) sp2.progress -= 1; if (sp2.mode === 'dive') { var p = sp2.progress; var R = 3, cx = 0, cz = -3, entryZ = cz + R, farX = 8; sp2.obj.visible = p > 0.03 && p < 0.97; if (p < 0.2) { var tp = p / 0.2; sp2.obj.position.x = farX * (1 - tp); sp2.obj.position.z = entryZ; sp2.obj.rotation.y = 0; } else if (p < 0.8) { var tp = (p - 0.2) / 0.6; var ang = Math.PI / 2 + tp * 2 * Math.PI; sp2.obj.position.x = cx + R * Math.cos(ang); sp2.obj.position.z = cz + R * Math.sin(ang); sp2.obj.rotation.y = Math.atan2(Math.cos(ang), Math.sin(ang)); } else { var tp = (p - 0.8) / 0.2; sp2.obj.position.x = -farX * tp; sp2.obj.position.z = entryZ; sp2.obj.rotation.y = 0; } sp2.obj.position.y = sp2.baseY + Math.sin(p * Math.PI) * 0.3; sp2.obj.rotation.z = Math.PI / 2; } else { var sX = sp2.dir > 0 ? -8 : 8; var eX = sp2.dir > 0 ? 8 : -8; sp2.obj.position.x = sX + (eX - sX) * sp2.progress; sp2.obj.position.y = sp2.baseY + Math.sin(t * 0.8 + sp2.phase) * 0.25; sp2.obj.position.z = sp2.zPos + Math.sin(t * 0.5 + sp2.phase) * 0.3; }
+      if (sp2.mode !== 'dive') { sp2.obj.visible = true; sp2.obj.rotation.z = (sp2.dir > 0 ? -Math.PI / 2 : Math.PI / 2) + Math.sin(t * 0.5 + sp2.phase) * 0.05; }
     }
-    mapGroup.rotation.y = cityRotY;
-    mapGroup.rotation.x = cityRotX;
 
     if (state === STATE.SLIDE_IN) {
       slideProgress = Math.min(slideProgress + dt * 0.8, 1);
       var e = easeOutCubic(slideProgress);
-      cardRoot.position.y = -5 + e * 5;
+      cardRoot.position.y = -5 + e * 6.8;
       planeRoot.position.y = cardRoot.position.y;
       if (slideProgress >= 1) {
         state = STATE.IDLE;
@@ -2707,8 +2711,8 @@ renderSelectPage();
     }
 
     if (state === STATE.IDLE) {
-      cardRoot.position.y = Math.sin(t * 1.5) * 0.06;
-      cardRoot.rotation.z = Math.sin(t * 1.2) * 0.01;
+      cardRoot.position.y = 1.8 + Math.sin(t * 1.5) * 0.06;
+      
       planeRoot.position.y = cardRoot.position.y;
       syncTextToCard();
     }
