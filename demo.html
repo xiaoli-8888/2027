@@ -1,6 +1,185 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="light"><head>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="GLTFLoader.js?v=5"></script>
+<script src="city_model.js?v=5"></script>
+<script src="fflate.js?v=5"></script>
+<script src="EXRLoader.js?v=5"></script>
+<script src="sky_model.js?v=5"></script>
+<script>
+// 精简 GLB 加载器（内联，支持贴图纹理）
+function loadGLB(url, onLoad, onError) {
+  // 计算贴图相对路径的基准目录
+  var basePath = url.substring(0, url.lastIndexOf('/') + 1);
+  fetch(url).then(function(r){ return r.arrayBuffer(); }).then(function(buf){
+    var dv = new DataView(buf);
+    var magic = dv.getUint32(0, true);
+    if (magic !== 0x46546C67) { onError && onError('not glb'); return; }
+    var version = dv.getUint32(4, true);
+    var totalLen = dv.getUint32(8, true);
+    var offset = 12;
+    var json = null, binData = null;
+    while (offset < totalLen) {
+      var chunkLen = dv.getUint32(offset, true);
+      var chunkType = dv.getUint32(offset + 4, true);
+      var chunkData = buf.slice(offset + 8, offset + 8 + chunkLen);
+      if (chunkType === 0x4E4F534A) {
+        json = JSON.parse(new TextDecoder().decode(chunkData));
+      } else if (chunkType === 0x004E4942) {
+        binData = chunkData;
+      }
+      offset += 8 + chunkLen;
+    }
+    if (!json) { onError && onError('no json'); return; }
+
+    var buffers = [binData || new ArrayBuffer(0)];
+    var accessorCache = {};
+    function getAccessor(idx) {
+      if (accessorCache[idx] !== undefined) return accessorCache[idx];
+      var acc = json.accessors[idx];
+      var bv = json.bufferViews[acc.bufferView];
+      var buffer = buffers[bv.buffer || 0];
+      var byteOffset = (bv.byteOffset || 0) + (acc.byteOffset || 0);
+      var count = acc.count;
+      var type = acc.type;
+      var compSize = { SCALAR:1, VEC2:2, VEC3:3, VEC4:4, MAT4:16 }[type];
+      var arr;
+      if (acc.componentType === 5126) {
+        arr = new Float32Array(buffer, byteOffset, count * compSize);
+      } else if (acc.componentType === 5123) {
+        arr = new Uint16Array(buffer, byteOffset, count * compSize);
+      } else if (acc.componentType === 5125) {
+        arr = new Uint32Array(buffer, byteOffset, count * compSize);
+      } else if (acc.componentType === 5121) {
+        arr = new Uint8Array(buffer, byteOffset, count * compSize);
+      } else {
+        arr = new Float32Array(buffer, byteOffset, count * compSize);
+      }
+      accessorCache[idx] = { array: arr, count: count, compSize: compSize, componentType: acc.componentType };
+      return accessorCache[idx];
+    }
+
+    // 加载 embedded 图片为 THREE.Texture
+    var textures = [];
+    if (json.images) {
+      json.images.forEach(function(imgDef){
+        var tex = null;
+        if (imgDef.bufferView !== undefined) {
+          var bv = json.bufferViews[imgDef.bufferView];
+          var buffer = buffers[bv.buffer || 0];
+          var imgBuf = buffer.slice(bv.byteOffset || 0, (bv.byteOffset || 0) + bv.byteLength);
+          var mime = imgDef.mimeType || 'image/png';
+          var blob = new Blob([imgBuf], { type: mime });
+          var url = URL.createObjectURL(blob);
+          tex = new THREE.TextureLoader().load(url);
+          tex.colorSpace = THREE.SRGBColorSpace;
+          tex.wrapS = THREE.RepeatWrapping;
+          tex.wrapT = THREE.RepeatWrapping;
+        } else if (imgDef.uri) {
+          // 外部 URI：相对于 GLB 文件所在目录解析
+          tex = new THREE.TextureLoader().load(basePath + imgDef.uri);
+          tex.colorSpace = THREE.SRGBColorSpace;
+        }
+        textures.push(tex);
+      });
+    }
+
+    function buildMesh(meshIdx) {
+      var meshDef = json.meshes[meshIdx];
+      var group = new THREE.Group();
+      meshDef.primitives.forEach(function(prim){
+        var geo = new THREE.BufferGeometry();
+        if (prim.attributes.POSITION !== undefined) {
+          var pos = getAccessor(prim.attributes.POSITION);
+          geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos.array), pos.compSize));
+        }
+        if (prim.attributes.NORMAL !== undefined) {
+          var nrm = getAccessor(prim.attributes.NORMAL);
+          geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(nrm.array), nrm.compSize));
+        }
+        // UV 坐标
+        if (prim.attributes.TEXCOORD_0 !== undefined) {
+          var uv = getAccessor(prim.attributes.TEXCOORD_0);
+          geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uv.array), uv.compSize));
+        }
+        // 顶点颜色（Poly.Pizza 模型常用）
+        var hasVertexColors = false;
+        if (prim.attributes.COLOR_0 !== undefined) {
+          var col = getAccessor(prim.attributes.COLOR_0);
+          var colArr;
+          if (col.componentType === 5121) {
+            // UNSIGNED_BYTE，需要归一化
+            colArr = new Float32Array(col.array.length);
+            for (var ci = 0; ci < col.array.length; ci++) colArr[ci] = col.array[ci] / 255;
+          } else {
+            colArr = new Float32Array(col.array);
+          }
+          geo.setAttribute('color', new THREE.BufferAttribute(colArr, col.compSize));
+          hasVertexColors = true;
+        }
+        if (prim.indices !== undefined) {
+          var idx = getAccessor(prim.indices);
+          geo.setIndex(new THREE.BufferAttribute(idx.array, 1));
+        }
+        // 材质（支持贴图 + 顶点色）
+        var mat;
+        if (prim.material !== undefined && json.materials) {
+          var mDef = json.materials[prim.material];
+          var color = 0xffffff;
+          var mapTex = null;
+          if (mDef.pbrMetallicRoughness) {
+            if (mDef.pbrMetallicRoughness.baseColorFactor) {
+              var c = mDef.pbrMetallicRoughness.baseColorFactor;
+              color = new THREE.Color(c[0], c[1], c[2]).getHex();
+            }
+            if (mDef.pbrMetallicRoughness.baseColorTexture !== undefined && json.textures) {
+              var texIdx = json.textures[mDef.pbrMetallicRoughness.baseColorTexture.index].source;
+              mapTex = textures[texIdx];
+            }
+          }
+          mat = new THREE.MeshStandardMaterial({
+            color: color,
+            map: mapTex,
+            vertexColors: hasVertexColors,
+            roughness: 0.85,
+            metalness: 0.0
+          });
+        } else {
+          mat = new THREE.MeshStandardMaterial({ color: 0xcccccc, vertexColors: hasVertexColors, roughness: 0.85 });
+        }
+        var mesh = new THREE.Mesh(geo, mat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        group.add(mesh);
+      });
+      return group;
+    }
+
+    var root = new THREE.Group();
+    var sceneIdx = json.scene || 0;
+    var sceneDef = json.scenes[sceneIdx];
+    function addNode(nodeIdx, parent) {
+      var nDef = json.nodes[nodeIdx];
+      var obj;
+      if (nDef.mesh !== undefined) {
+        obj = buildMesh(nDef.mesh);
+      } else {
+        obj = new THREE.Group();
+      }
+      if (nDef.translation) obj.position.fromArray(nDef.translation);
+      if (nDef.rotation) obj.quaternion.fromArray(nDef.rotation);
+      if (nDef.scale) obj.scale.fromArray(nDef.scale);
+      if (nDef.matrix) obj.matrix.fromArray(nDef.matrix).decompose(obj.position, obj.quaternion, obj.scale);
+      parent.add(obj);
+      if (nDef.children) nDef.children.forEach(function(c){ addNode(c, obj); });
+    }
+    sceneDef.nodes.forEach(function(n){ addNode(n, root); });
+    onLoad(root);
+  }).catch(onError || function(e){ console.error('GLB load error', e); });
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=Caveat:wght@400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style id="theme-vars">
   :root {
     --bg: #FAFAFA;
@@ -372,6 +551,7 @@
     margin-top: 28px;
   }
   .nav-btn {<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <style id="theme-vars">
   :root {
     --bg: #FAFAFA;
@@ -1228,7 +1408,109 @@
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-primary:disabled { background: #ddd; cursor:not-allowed; }
 .footer-bar { border-top:1px solid #eee; padding:24px 0; margin-top:40px; display:flex; align-items:center; justify-content:space-between; }
-.footer-bar b { color: var(--primary); font-weight:600; }</style>
+.footer-bar b { color: var(--primary); font-weight:600; }/* ===== 3D 纸飞机开场页 ===== */
+/* ===== 3D 纸飞机开场页 ===== */
+/* ===== 3D 纸飞机开场页 ===== */
+/* ===== 3D 纸飞机开场页 ===== */
+/* ===== 3D 纸飞机开场页 ===== */
+.intro-page {
+  position: fixed; inset: 0;
+  background: #1a1a1a;
+  z-index: 9999;
+  overflow: hidden;
+  display: block;
+}
+#introMap {
+  position: absolute; inset: 0;
+  z-index: 1;
+}
+/* 地图由 Three.js 3D 渲染，这里不做静态背景 */
+.intro-map-overlay {
+  display: none;
+}
+#introCanvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+.intro-card-text {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  pointer-events: none;
+  text-align: center;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease;
+}
+.intro-card-text.fade-out { opacity: 0; }
+.intro-card-text .hello-text {
+  font-family: 'Dancing Script', 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 48px;
+  color: #000000;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.intro-card-text .cn-text {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 28px;
+  color: #000000;
+  line-height: 1.4;
+  text-align: center;
+}
+.intro-card-text .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: charAppear 0.4s ease forwards;
+}
+@keyframes charAppear {
+  to { opacity: 1; transform: translateY(0); }
+}
+.intro-avatar {
+  position: absolute;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  border: 3px solid #fff;
+  z-index: 3;
+  animation: floatAvatar 4s ease-in-out infinite;
+  background: #ddd;
+}
+.intro-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@keyframes floatAvatar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.intro-hint {
+  position: absolute; bottom: 8%; left: 50%;
+  transform: translateX(-50%);
+  color: #5a5a5a;
+  font-size: 14px; letter-spacing: 3px;
+  z-index: 10; pointer-events: none;
+  animation: hintPulse 2s ease-in-out infinite;
+  background: rgba(255,255,255,0.7);
+  padding: 8px 18px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.intro-hint.hide { display: none; }
+
+</style>
 </head>
 <body class="custom-cursor">
 
@@ -1238,7 +1520,18 @@
 <!-- ==================== 购物袋光标 ==================== -->
 
 <!-- ==================== PAGE 1: 选择陪伴者 ==================== -->
-<section class="page select-page active" id="page-select">
+<section class="page intro-page" id="page-intro">
+  <div id="introMap"></div>
+  <div class="intro-map-overlay"></div>
+  <canvas id="introCanvas"></canvas>
+  <div class="intro-card-text" id="introCardText">
+    <div class="hello-text" id="helloText"></div>
+    <div class="cn-text" id="cnText"></div>
+  </div>
+  <div class="intro-hint" id="introHint">按住卡片向下拖动</div>
+</section>
+
+<section class="page select-page" id="page-select">
   <h1 class="brand-title">邀请他们一起逛街吧</h1>
   <p class="brand-sub">拿不定主意, TA 来帮你把关</p>
 
@@ -1906,4 +2199,555 @@ function postComment(btn) {
 renderSelectPage();
 
 }); // end outer DOMContentLoaded
-</script></body></html>
+</script>
+<script>
+(function initIntro() {
+  var canvas = document.getElementById('introCanvas');
+  if (!canvas) return;
+
+  // ===== Three.js 场景 =====
+  var scene = new THREE.Scene();
+  // 加载 EXR 天空背景
+  (function () {
+    var _sb64 = SKY_EXR_BASE64;
+    var _sbin = atob(_sb64);
+    var _sbuf = new Uint8Array(_sbin.length);
+    for (var i = 0; i < _sbin.length; i++) _sbuf[i] = _sbin.charCodeAt(i);
+    new THREE.EXRLoader().parse(_sbuf.buffer, '', function (tex) {
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      tex.colorSpace = THREE.SRGBColorSpace;
+      scene.background = tex;
+      console.log('[sky] EXR loaded');
+    }, function (e) { console.error('[sky] EXR parse error', e); });
+  })();
+  var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 4.5, 7);
+  camera.lookAt(0, 2, -6);
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // 光照：环境光 + 方向光（投射阴影）
+  // 环境光调高确保卡片和飞机保持纯白
+  scene.add(new THREE.AmbientLight(0xffffff, 1.3));
+  var keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  keyLight.position.set(2, 6, 5);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.camera.near = 0.5;
+  keyLight.shadow.camera.far = 25;
+  keyLight.shadow.camera.left = -6;
+  keyLight.shadow.camera.right = 6;
+  keyLight.shadow.camera.top = 6;
+  keyLight.shadow.camera.bottom = -6;
+  keyLight.shadow.bias = -0.0005;
+  scene.add(keyLight);
+  var fillLight = new THREE.DirectionalLight(0xfff5e8, 0.25);
+  fillLight.position.set(-3, 2, 3);
+  scene.add(fillLight);
+
+  // 阴影接收地面（不可见，只显示阴影）
+  var shadowGround = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 40),
+    new THREE.ShadowMaterial({ opacity: 0.25 })
+  );
+  shadowGround.rotation.x = -Math.PI / 2;
+  shadowGround.position.y = -1.6;
+  shadowGround.receiveShadow = true;
+  scene.add(shadowGround);
+
+  // ===== 3D 城市背景：未来低多边形城市（GLTF 模型） =====
+  var mapGroup = new THREE.Group();
+  scene.add(mapGroup);
+
+  var groundY = -1.6;
+
+  // 加载未来城市场景
+  var _b64 = CITY_GLB_BASE64;
+  var _bin = atob(_b64);
+  var _buf = new Uint8Array(_bin.length);
+  for (var i = 0; i < _bin.length; i++) _buf[i] = _bin.charCodeAt(i);
+  new THREE.GLTFLoader().parse(_buf.buffer, '', function (gltf) {
+    var model = gltf.scene;
+    var box = new THREE.Box3().setFromObject(model);
+    var size = box.getSize(new THREE.Vector3());
+    var center = box.getCenter(new THREE.Vector3());
+    var targetW = 36;
+    var scale = targetW / size.x;
+    model.scale.setScalar(scale);
+    model.position.set(
+      -center.x * scale + 3,
+      groundY - (box.min.y * scale),
+      -center.z * scale - 5
+    );
+    model.updateMatrixWorld(true);
+    var floatThreshold = groundY + 3;
+    var toRemove = [];
+    model.traverse(function (child) {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        var mb = new THREE.Box3().setFromObject(child);
+        if (mb.min.y > floatThreshold) toRemove.push(child);
+      }
+    });
+    toRemove.forEach(function (m) { if (m.parent) m.parent.remove(m); });
+    mapGroup.add(model);
+    // 左右各复制一份城市，填充画面两侧
+    var cityW = size.x * scale * 0.35;
+    [-cityW, cityW].forEach(function (dx) {
+      var clone = model.clone();
+      clone.traverse(function (c) {
+        if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; }
+      });
+      clone.position.x = model.position.x + dx;
+      mapGroup.add(clone);
+    });
+    console.log('[city] removed', toRemove.length, 'floating meshes');
+    console.log('[city] future_city loaded, size:', size.x.toFixed(1), size.y.toFixed(1), size.z.toFixed(1), 'scale:', scale.toFixed(3));
+  });
+
+  // ===== 卡片纹理：纯白圆角纸卡（无边框、无箭头、无文字） =====
+  var cardTex;
+  function makeCardTexture() {
+    var c = document.createElement('canvas');
+    c.width = 1024; c.height = 1365;
+    var ctx = c.getContext('2d');
+    // 白底圆角
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, 10, 10, 1004, 1345, 60);
+    ctx.fill();
+    var tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  cardTex = makeCardTexture();
+
+  // ===== 白色纸张材质（MeshBasicMaterial 确保纯白，不受光照影响） =====
+  function makePaperMat(uOffset) {
+    var t = cardTex.clone();
+    t.wrapS = THREE.ClampToEdgeWrapping;
+    t.wrapT = THREE.ClampToEdgeWrapping;
+    t.offset.set(uOffset, 0);
+    t.repeat.set(0.5, 1);
+    return new THREE.MeshBasicMaterial({
+      map: t,
+      side: THREE.DoubleSide,
+      transparent: true
+    });
+  }
+
+  // 左半显示纹理左半边(u 0~0.5)，右半显示右半边(u 0.5~1)
+  var cardMatL = makePaperMat(0);
+  var cardMatR = makePaperMat(0.5);
+
+  // ===== 卡片：左右两半（用于对折动画） =====
+  var cardW = 2.4, cardH = 3.2;
+  var halfW = cardW / 2;
+
+  var cardRoot = new THREE.Group();
+  scene.add(cardRoot);
+
+  var leftGroup = new THREE.Group();
+  cardRoot.add(leftGroup);
+  var cardL = new THREE.Mesh(new THREE.PlaneGeometry(halfW, cardH), cardMatL);
+  cardL.position.x = -halfW / 2;
+  leftGroup.add(cardL);
+
+  var rightGroup = new THREE.Group();
+  cardRoot.add(rightGroup);
+  var cardR = new THREE.Mesh(new THREE.PlaneGeometry(halfW, cardH), cardMatR);
+  cardR.position.x = halfW / 2;
+  rightGroup.add(cardR);
+
+  // ===== 卡片投影（跟随卡片的软阴影） =====
+  function makeShadowTexture() {
+    var c = document.createElement('canvas');
+    c.width = 256; c.height = 256;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(128, 128, 20, 128, 128, 128);
+    g.addColorStop(0, 'rgba(0,0,0,0.35)');
+    g.addColorStop(0.6, 'rgba(0,0,0,0.12)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 256, 256);
+    var tex = new THREE.CanvasTexture(c);
+    return tex;
+  }
+  var cardShadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(cardW * 1.1, cardH * 0.4),
+    new THREE.MeshBasicMaterial({
+      map: makeShadowTexture(),
+      transparent: true,
+      depthWrite: false
+    })
+  );
+  cardShadow.rotation.x = -Math.PI / 2;
+  cardShadow.position.y = -1.58;
+  cardRoot.add(cardShadow);
+
+  // ===== 纸飞机：经典 dart 造型 =====
+  // 用 ShapeGeometry 创建飞机轮廓，分左右两半沿中线折叠
+  var planeW = 2.6, planeH = 3.4;
+  var noseY = planeH / 2;
+  var wingTipY = -planeH / 2 + 0.3;
+  var wingTipX = planeW / 2;
+  var tailNotchY = -planeH / 2;
+  var tailX = 0.12;
+
+  // 左半飞机形状
+  var leftShape = new THREE.Shape();
+  leftShape.moveTo(0, noseY);
+  leftShape.lineTo(-wingTipX, wingTipY);
+  leftShape.lineTo(-tailX, tailNotchY + 0.4);
+  leftShape.lineTo(0, tailNotchY);
+  leftShape.lineTo(0, noseY);
+
+  // 右半飞机形状
+  var rightShape = new THREE.Shape();
+  rightShape.moveTo(0, noseY);
+  rightShape.lineTo(wingTipX, wingTipY);
+  rightShape.lineTo(tailX, tailNotchY + 0.4);
+  rightShape.lineTo(0, tailNotchY);
+  rightShape.lineTo(0, noseY);
+
+  // 白色纸张材质（飞机用纯白，不受光照影响）
+  function makeWhiteMat() {
+    return new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      side: THREE.DoubleSide,
+      transparent: true
+    });
+  }
+  var planeMatL = makeWhiteMat();
+  var planeMatR = makeWhiteMat();
+
+  var planeRoot = new THREE.Group();
+  planeRoot.visible = false;
+  scene.add(planeRoot);
+
+  var planeLeftGroup = new THREE.Group();
+  planeRoot.add(planeLeftGroup);
+  var planeLeft = new THREE.Mesh(new THREE.ShapeGeometry(leftShape), planeMatL);
+  planeLeft.castShadow = true;
+  planeLeftGroup.add(planeLeft);
+
+  var planeRightGroup = new THREE.Group();
+  planeRoot.add(planeRightGroup);
+  var planeRight = new THREE.Mesh(new THREE.ShapeGeometry(rightShape), planeMatR);
+  planeRight.castShadow = true;
+  planeRightGroup.add(planeRight);
+
+  // 中线折痕（细深色线，模拟真实折纸折痕）
+  var foldLineGeo = new THREE.PlaneGeometry(0.02, planeH);
+  var foldLineMat = new THREE.MeshBasicMaterial({
+    color: 0xc8c0b8,
+    transparent: true,
+    opacity: 0.6
+  });
+  var foldLine = new THREE.Mesh(foldLineGeo, foldLineMat);
+  foldLine.position.z = 0.001;
+  planeRoot.add(foldLine);
+
+  // ===== 状态机 =====
+  var STATE = { SLIDE_IN: 0, IDLE: 1, FOLDING: 2, FLYING: 3, DONE: 4 };
+  var state = STATE.SLIDE_IN;
+  var foldProgress = 0;
+  var flyProgress = 0;
+  var slideProgress = 0;
+  var textShown = false;
+
+  // ===== 文字逐个出现动画 =====
+  function showCardText() {
+    if (textShown) return;
+    textShown = true;
+    var helloEl = document.getElementById('helloText');
+    var cnEl = document.getElementById('cnText');
+    if (!helloEl || !cnEl) return;
+    var helloStr = 'hello';
+    var cnStr = '欢迎来到友好购物空间';
+    // 清空
+    helloEl.innerHTML = '';
+    cnEl.innerHTML = '';
+    var delay = 0;
+    // hello 每个字母
+    for (var i = 0; i < helloStr.length; i++) {
+      var sp = document.createElement('span');
+      sp.className = 'char';
+      sp.textContent = helloStr[i];
+      sp.style.animationDelay = delay + 's';
+      helloEl.appendChild(sp);
+      delay += 0.06;
+    }
+    delay += 0.2;
+    // 中文每个字（分两行：欢迎来到 / 友好购物空间）
+    for (var j = 0; j < cnStr.length; j++) {
+      var sp2 = document.createElement('span');
+      sp2.className = 'char';
+      sp2.textContent = cnStr[j];
+      sp2.style.animationDelay = delay + 's';
+      cnEl.appendChild(sp2);
+      delay += 0.08;
+      if (j === 3) {
+        cnEl.appendChild(document.createElement('br'));
+      }
+    }
+    syncTextToCard();
+  }
+
+  function hideCardText() {
+    var el = document.getElementById('introCardText');
+    if (el) el.classList.add('fade-out');
+  }
+
+  var isDragging = false, dragStartY = 0, dragDist = 0;
+  var hintEl = document.getElementById('introHint');
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  // 贝塞尔飞行路径：直接向上飞出屏幕
+  var flyPath = [
+    new THREE.Vector3(0, 0, 0),           // 起点
+    new THREE.Vector3(0, 3, 0),           // 向上
+    new THREE.Vector3(0, 6.5, 0),         // 继续向上
+    new THREE.Vector3(0, 11, 0)           // 飞出屏幕顶部
+  ];
+  function bezierPoint(p0, p1, p2, p3, t) {
+    var u = 1 - t;
+    return p0.clone().multiplyScalar(u * u * u)
+      .add(p1.clone().multiplyScalar(3 * u * u * t))
+      .add(p2.clone().multiplyScalar(3 * u * t * t))
+      .add(p3.clone().multiplyScalar(t * t * t));
+  }
+  function bezierTangent(p0, p1, p2, p3, t) {
+    var u = 1 - t;
+    return p1.clone().sub(p0).multiplyScalar(3 * u * u)
+      .add(p2.clone().sub(p1).multiplyScalar(6 * u * t))
+      .add(p3.clone().sub(p2).multiplyScalar(3 * t * t));
+  }
+
+  // 拖拽
+  window.addEventListener('mousedown', function (e) {
+    if (state !== STATE.IDLE) return;
+    isDragging = true;
+    dragStartY = e.clientY;
+    dragDist = 0;
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    var dy = e.clientY - dragStartY;
+    if (dy > 0) {
+      dragDist = Math.max(dragDist, dy);
+      foldProgress = Math.min(dragDist / 160, 1);
+      if (foldProgress > 0 && state === STATE.IDLE) {
+        state = STATE.FOLDING;
+        hideCardText();
+      }
+    }
+    if (hintEl) {
+      if (foldProgress < 0.3) hintEl.textContent = '继续拖动... 卡片正在对折';
+      else if (foldProgress < 0.7) hintEl.textContent = '快折好了！纸飞机即将成型';
+      else hintEl.textContent = '最后一下！';
+    }
+  });
+  window.addEventListener('mouseup', function () {
+    if (!isDragging) return;
+    isDragging = false;
+    if (foldProgress >= 1) {
+      startFlying();
+    } else if (foldProgress > 0) {
+      var sb = setInterval(function () {
+        foldProgress -= 0.04;
+        if (foldProgress <= 0) {
+          foldProgress = 0; clearInterval(sb); state = STATE.IDLE;
+          if (hintEl) hintEl.textContent = '按住卡片向下拖动';
+        }
+      }, 16);
+    }
+  });
+
+  function startFlying() {
+    state = STATE.FLYING;
+    flyProgress = 0;
+    if (hintEl) hintEl.classList.add('hide');
+  }
+
+  // ===== 折叠/变形更新 =====
+  function updateFold(fp) {
+    var a = easeInOutCubic(fp);
+
+    // 卡片对折
+    var foldAngle = a * (Math.PI / 2.05);
+    leftGroup.rotation.y = -foldAngle;
+    rightGroup.rotation.y = foldAngle;
+
+    // 卡片缩小 + 淡出
+    var cardScale = 1 - a * 0.4;
+    cardRoot.scale.set(cardScale, cardScale, cardScale);
+    var cardOpacity = 1 - a;
+    cardMatL.opacity = cardOpacity;
+    cardMatR.opacity = cardOpacity;
+    cardShadow.material.opacity = cardOpacity;
+
+    // 纸飞机淡入 + 放大
+    planeRoot.visible = a > 0.05;
+    planeRoot.scale.setScalar(a);
+    planeMatL.opacity = a;
+    planeMatR.opacity = a;
+    foldLineMat.opacity = a * 0.6;
+
+    // 飞机左右机翼沿中线向上折叠（形成立体机身）
+    var wingFold = a * 0.35;
+    planeLeftGroup.rotation.y = -wingFold;
+    planeRightGroup.rotation.y = wingFold;
+  }
+
+  // 字体由 Google Fonts 加载，HTML 文字层直接使用 CSS 字体
+
+  // 让 HTML 文字实时跟随 3D 卡片位置
+  var _projVec = new THREE.Vector3();
+  function syncTextToCard() {
+    var textEl = document.getElementById('introCardText');
+    if (!textEl) return;
+    _projVec.copy(cardRoot.position).project(camera);
+    var sx = (_projVec.x * 0.5 + 0.5) * window.innerWidth;
+    var sy = (-_projVec.y * 0.5 + 0.5) * window.innerHeight;
+    textEl.style.left = sx + 'px';
+    textEl.style.top = sy + 'px';
+  }
+
+  // ===== 动画循环 =====
+  var clock = new THREE.Clock();
+  // ===== 城市手动拖拽旋转 =====
+  var cityRotY = 0;      // 水平旋转角度
+  var cityRotX = -0.1;   // 初始倾斜（接近平视）
+  var isDragging = false;
+  var lastX = 0, lastY = 0;
+  var rotVelocityY = 0, rotVelocityX = 0;
+
+  function onPointerDown(e) {
+    isDragging = true;
+    var p = e.touches ? e.touches[0] : e;
+    lastX = p.clientX;
+    lastY = p.clientY;
+    rotVelocityY = 0;
+    rotVelocityX = 0;
+  }
+  function onPointerMove(e) {
+    if (!isDragging) return;
+    var p = e.touches ? e.touches[0] : e;
+    var dx = p.clientX - lastX;
+    var dy = p.clientY - lastY;
+    lastX = p.clientX;
+    lastY = p.clientY;
+    rotVelocityY = dx * 0.005;
+    rotVelocityX = dy * 0.005;
+    cityRotY += rotVelocityY;
+    cityRotX += rotVelocityX;
+    // 限制垂直旋转角度
+    cityRotX = Math.max(-1.2, Math.min(0.3, cityRotX));
+  }
+  function onPointerUp() {
+    isDragging = false;
+  }
+
+  canvas.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+  canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+  window.addEventListener('touchmove', onPointerMove, { passive: true });
+  window.addEventListener('touchend', onPointerUp);
+
+  function animate() {
+    requestAnimationFrame(animate);
+    var dt = clock.getDelta();
+    var t = clock.getElapsedTime();
+
+    // 拖拽旋转 + 松手后惯性衰减 + 缓慢自动浮动
+    if (!isDragging) {
+      cityRotY += rotVelocityY;
+      cityRotX += rotVelocityX;
+      rotVelocityY *= 0.95;
+      rotVelocityX *= 0.95;
+      cityRotX = Math.max(-1.2, Math.min(0.3, cityRotX));
+    }
+    mapGroup.rotation.y = cityRotY;
+    mapGroup.rotation.x = cityRotX;
+
+    if (state === STATE.SLIDE_IN) {
+      slideProgress = Math.min(slideProgress + dt * 0.8, 1);
+      var e = easeOutCubic(slideProgress);
+      cardRoot.position.y = -5 + e * 5;
+      planeRoot.position.y = cardRoot.position.y;
+      if (slideProgress >= 1) {
+        state = STATE.IDLE;
+        showCardText();
+      }
+    }
+
+    if (state === STATE.IDLE) {
+      cardRoot.position.y = Math.sin(t * 1.5) * 0.06;
+      cardRoot.rotation.z = Math.sin(t * 1.2) * 0.01;
+      planeRoot.position.y = cardRoot.position.y;
+      syncTextToCard();
+    }
+
+    if (state === STATE.IDLE || state === STATE.FOLDING) {
+      if (foldProgress > 0 && state === STATE.IDLE) state = STATE.FOLDING;
+      updateFold(foldProgress);
+      if (state === STATE.FOLDING) syncTextToCard();
+    }
+
+    if (state === STATE.FLYING) {
+      updateFold(1);
+      flyProgress = Math.min(flyProgress + dt * 0.35, 1);
+      var ft = easeInOutCubic(flyProgress);
+      var pos = bezierPoint(flyPath[0], flyPath[1], flyPath[2], flyPath[3], ft);
+      cardRoot.position.copy(pos);
+      planeRoot.position.copy(pos);
+      var tan = bezierTangent(flyPath[0], flyPath[1], flyPath[2], flyPath[3], ft);
+      // 飞机直接朝上飞，保持折叠后的姿态（机头朝上），不做 lookAt 避免掉头
+      planeRoot.rotation.set(0, 0, Math.sin(t * 3) * 0.04);
+      if (flyProgress >= 1) {
+        state = STATE.DONE;
+        setTimeout(function () {
+          var intro = document.getElementById('page-intro');
+          if (intro) intro.style.display = 'none';
+          document.getElementById('page-select').classList.add('active');
+        }, 300);
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+</body></html>

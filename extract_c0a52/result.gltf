@@ -1,0 +1,1429 @@
+{
+    "asset": {
+        "version": "1.0",
+        "generator": "Open Asset Import Library (assimp v5.2.0)"
+    },
+    "accessors": {
+        "big_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 65535,
+            "type": "VEC3",
+            "max": [
+                999.9996948242188,
+                57.304046630859378,
+                675.9019775390625
+            ],
+            "min": [
+                -999.9996948242188,
+                -57.30344772338867,
+                -1124.0791015625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 65535,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 65535,
+            "type": "VEC2",
+            "max": [
+                0.9989989399909973,
+                1.0000027418136597
+            ],
+            "min": [
+                0.0,
+                -0.00006103515625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 65535,
+            "type": "SCALAR",
+            "max": [
+                65534
+            ],
+            "min": [
+                0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_accessor": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_0_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 39996,
+            "type": "VEC3",
+            "max": [
+                999.9996948242188,
+                32.56517028808594,
+                475.94476318359377
+            ],
+            "min": [
+                -999.9996948242188,
+                -57.30344772338867,
+                -1124.0791015625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_accessor_0": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_0_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 39996,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_accessor_1": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_0_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 39996,
+            "type": "VEC2",
+            "max": [
+                0.9980232119560242,
+                1.0000027418136597
+            ],
+            "min": [
+                0.0,
+                -0.00006103515625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_accessor_2": {
+            "bufferView": "big_Block_base_-_checkwebp_0_mesh_0_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 39996,
+            "type": "SCALAR",
+            "max": [
+                39995
+            ],
+            "min": [
+                0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_accessor": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 65535,
+            "type": "VEC3",
+            "max": [
+                999.9996948242188,
+                57.304046630859378,
+                875.9202270507813
+            ],
+            "min": [
+                -999.9996948242188,
+                -57.30344772338867,
+                -1124.0791015625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_accessor_0": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 65535,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_accessor_1": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 65535,
+            "type": "VEC2",
+            "max": [
+                0.9989989399909973,
+                1.0000027418136597
+            ],
+            "min": [
+                0.0,
+                -0.00006103515625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_accessor_2": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 65535,
+            "type": "SCALAR",
+            "max": [
+                65534
+            ],
+            "min": [
+                0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_accessor": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_0_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 15213,
+            "type": "VEC3",
+            "max": [
+                999.9996948242188,
+                7.812297821044922,
+                875.9202270507813
+            ],
+            "min": [
+                -999.9996948242188,
+                -57.30344772338867,
+                -1124.0791015625
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_accessor_0": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_0_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 15213,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_accessor_1": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_0_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 15213,
+            "type": "VEC2",
+            "max": [
+                0.5000482797622681,
+                1.0000027418136597
+            ],
+            "min": [
+                0.0,
+                0.3281249403953552
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_accessor_2": {
+            "bufferView": "big_Block_base_-_checkwebp_0_1_mesh_0_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 15213,
+            "type": "SCALAR",
+            "max": [
+                15212
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1932,
+            "type": "VEC3",
+            "max": [
+                975.008544921875,
+                21.19371223449707,
+                1124.0791015625
+            ],
+            "min": [
+                774.9902954101563,
+                -57.304046630859378,
+                924.0608520507813
+            ]
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1932,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1932,
+            "type": "VEC2",
+            "max": [
+                0.9970781803131104,
+                0.999999463558197
+            ],
+            "min": [
+                0.3671869933605194,
+                0.3280860185623169
+            ]
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1932,
+            "type": "SCALAR",
+            "max": [
+                1931
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1944,
+            "type": "VEC3",
+            "max": [
+                725.008544921875,
+                -1.6418476104736329,
+                1124.0791015625
+            ],
+            "min": [
+                524.9902954101563,
+                -57.30344772338867,
+                924.0608520507813
+            ]
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1944,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1944,
+            "type": "VEC2",
+            "max": [
+                0.4999941885471344,
+                0.999999463558197
+            ],
+            "min": [
+                0.0,
+                0.3280860185623169
+            ]
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1944,
+            "type": "SCALAR",
+            "max": [
+                1943
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1929,
+            "type": "VEC3",
+            "max": [
+                475.008544921875,
+                57.30404281616211,
+                1124.0791015625
+            ],
+            "min": [
+                274.99029541015627,
+                -57.30344772338867,
+                924.0608520507813
+            ]
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1929,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1929,
+            "type": "VEC2",
+            "max": [
+                0.99900221824646,
+                0.999999463558197
+            ],
+            "min": [
+                0.3671869933605194,
+                0.3280860185623169
+            ]
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1929,
+            "type": "SCALAR",
+            "max": [
+                1928
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1866,
+            "type": "VEC3",
+            "max": [
+                225.00039672851563,
+                7.812677383422852,
+                1124.0709228515626
+            ],
+            "min": [
+                25.00031280517578,
+                -57.30341339111328,
+                924.0708618164063
+            ]
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1866,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1866,
+            "type": "VEC2",
+            "max": [
+                0.4999999403953552,
+                0.999999463558197
+            ],
+            "min": [
+                0.0,
+                0.3280860185623169
+            ]
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1866,
+            "type": "SCALAR",
+            "max": [
+                1865
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1899,
+            "type": "VEC3",
+            "max": [
+                -24.99143409729004,
+                32.56516647338867,
+                1124.0791015625
+            ],
+            "min": [
+                -225.0096893310547,
+                -57.30344772338867,
+                924.0608520507813
+            ]
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1899,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1899,
+            "type": "VEC2",
+            "max": [
+                0.9970085620880127,
+                1.0000005960464478
+            ],
+            "min": [
+                0.3671869933605194,
+                0.2500309944152832
+            ]
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1899,
+            "type": "SCALAR",
+            "max": [
+                1898
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1995,
+            "type": "VEC3",
+            "max": [
+                -274.9914245605469,
+                28.46242332458496,
+                1124.0791015625
+            ],
+            "min": [
+                -475.0096740722656,
+                -57.30344772338867,
+                924.0608520507813
+            ]
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1995,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.999997615814209,
+                -1.0
+            ]
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1995,
+            "type": "VEC2",
+            "max": [
+                0.4999941885471344,
+                0.9999998807907105
+            ],
+            "min": [
+                0.0,
+                0.25
+            ]
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1995,
+            "type": "SCALAR",
+            "max": [
+                1994
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1635,
+            "type": "VEC3",
+            "max": [
+                -524.9913940429688,
+                22.35552978515625,
+                1124.0791015625
+            ],
+            "min": [
+                -725.0096435546875,
+                -57.30344772338867,
+                924.0608520507813
+            ]
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1635,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.8270904421806336,
+                -1.0
+            ]
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1635,
+            "type": "VEC2",
+            "max": [
+                0.9980258941650391,
+                1.0000027418136597
+            ],
+            "min": [
+                0.3671869933605194,
+                -0.00006103515625
+            ]
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1635,
+            "type": "SCALAR",
+            "max": [
+                1634
+            ],
+            "min": [
+                0
+            ]
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor": {
+            "bufferView": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1560,
+            "type": "VEC3",
+            "max": [
+                -774.9995727539063,
+                -4.56450891494751,
+                1124.0709228515626
+            ],
+            "min": [
+                -974.9996948242188,
+                -57.30341339111328,
+                924.0708618164063
+            ]
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor_0": {
+            "bufferView": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view_0",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1560,
+            "type": "VEC3",
+            "max": [
+                0.999997615814209,
+                0.999997615814209,
+                1.0
+            ],
+            "min": [
+                -0.999997615814209,
+                -0.8273975849151611,
+                -1.0
+            ]
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor_1": {
+            "bufferView": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view_1",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5126,
+            "count": 1560,
+            "type": "VEC2",
+            "max": [
+                0.4999941885471344,
+                0.9999982118606567
+            ],
+            "min": [
+                0.0,
+                0.0
+            ]
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor_2": {
+            "bufferView": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view_2",
+            "byteOffset": 0,
+            "byteStride": 0,
+            "componentType": 5123,
+            "count": 1560,
+            "type": "SCALAR",
+            "max": [
+                1559
+            ],
+            "min": [
+                0
+            ]
+        }
+    },
+    "buffers": {
+        "result": {
+            "byteLength": 6835340,
+            "type": "arraybuffer",
+            "uri": "result.bin"
+        }
+    },
+    "bufferViews": {
+        "big_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 0,
+            "byteLength": 786420,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 786420,
+            "byteLength": 786420,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 1572840,
+            "byteLength": 524280,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 2097120,
+            "byteLength": 131070,
+            "target": 34963
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_view": {
+            "buffer": "result",
+            "byteOffset": 2228192,
+            "byteLength": 479952,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_view_0": {
+            "buffer": "result",
+            "byteOffset": 2708144,
+            "byteLength": 479952,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_view_1": {
+            "buffer": "result",
+            "byteOffset": 3188096,
+            "byteLength": 319968,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0_view_2": {
+            "buffer": "result",
+            "byteOffset": 3508064,
+            "byteLength": 79992,
+            "target": 34963
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 3588056,
+            "byteLength": 786420,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 4374476,
+            "byteLength": 786420,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 5160896,
+            "byteLength": 524280,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 5685176,
+            "byteLength": 131070,
+            "target": 34963
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_view": {
+            "buffer": "result",
+            "byteOffset": 5816248,
+            "byteLength": 182556,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_view_0": {
+            "buffer": "result",
+            "byteOffset": 5998804,
+            "byteLength": 182556,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_view_1": {
+            "buffer": "result",
+            "byteOffset": 6181360,
+            "byteLength": 121704,
+            "target": 34962
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0_view_2": {
+            "buffer": "result",
+            "byteOffset": 6303064,
+            "byteLength": 30426,
+            "target": 34963
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6333492,
+            "byteLength": 23184,
+            "target": 34962
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6356676,
+            "byteLength": 23184,
+            "target": 34962
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6379860,
+            "byteLength": 15456,
+            "target": 34962
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6395316,
+            "byteLength": 3864,
+            "target": 34963
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6399180,
+            "byteLength": 23328,
+            "target": 34962
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6422508,
+            "byteLength": 23328,
+            "target": 34962
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6445836,
+            "byteLength": 15552,
+            "target": 34962
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6461388,
+            "byteLength": 3888,
+            "target": 34963
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6465276,
+            "byteLength": 23148,
+            "target": 34962
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6488424,
+            "byteLength": 23148,
+            "target": 34962
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6511572,
+            "byteLength": 15432,
+            "target": 34962
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6527004,
+            "byteLength": 3858,
+            "target": 34963
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6530864,
+            "byteLength": 22392,
+            "target": 34962
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6553256,
+            "byteLength": 22392,
+            "target": 34962
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6575648,
+            "byteLength": 14928,
+            "target": 34962
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6590576,
+            "byteLength": 3732,
+            "target": 34963
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6594308,
+            "byteLength": 22788,
+            "target": 34962
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6617096,
+            "byteLength": 22788,
+            "target": 34962
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6639884,
+            "byteLength": 15192,
+            "target": 34962
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6655076,
+            "byteLength": 3798,
+            "target": 34963
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6658876,
+            "byteLength": 23940,
+            "target": 34962
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6682816,
+            "byteLength": 23940,
+            "target": 34962
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6706756,
+            "byteLength": 15960,
+            "target": 34962
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6722716,
+            "byteLength": 3990,
+            "target": 34963
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6726708,
+            "byteLength": 19620,
+            "target": 34962
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6746328,
+            "byteLength": 19620,
+            "target": 34962
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6765948,
+            "byteLength": 13080,
+            "target": 34962
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6779028,
+            "byteLength": 3270,
+            "target": 34963
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view": {
+            "buffer": "result",
+            "byteOffset": 6782300,
+            "byteLength": 18720,
+            "target": 34962
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view_0": {
+            "buffer": "result",
+            "byteOffset": 6801020,
+            "byteLength": 18720,
+            "target": 34962
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view_1": {
+            "buffer": "result",
+            "byteOffset": 6819740,
+            "byteLength": 12480,
+            "target": 34962
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh_view_2": {
+            "buffer": "result",
+            "byteOffset": 6832220,
+            "byteLength": 3120,
+            "target": 34963
+        }
+    },
+    "images": {
+        "image": {
+            "uri": "67eeecfa-5b61-44df-b01b-cef034a6bc82.png"
+        }
+    },
+    "materials": {
+        "DefaultMaterial": {
+            "values": {
+                "ambient": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "diffuse": [
+                    0.6000000238418579,
+                    0.6000000238418579,
+                    0.6000000238418579,
+                    1.0
+                ],
+                "specular": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "emission": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shininess": 0.0
+            }
+        },
+        "67eeecfa-5b61-44df-b01b-cef034a6bc82": {
+            "values": {
+                "ambient": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "diffuse": "texture",
+                "specular": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "emission": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shininess": 0.0
+            }
+        }
+    },
+    "meshes": {
+        "big_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "big_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "big_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "big_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "big_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_mesh_0": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "big_Block_base_-_checkwebp_0_mesh_0_accessor_2",
+                    "attributes": {
+                        "POSITION": "big_Block_base_-_checkwebp_0_mesh_0_accessor",
+                        "NORMAL": "big_Block_base_-_checkwebp_0_mesh_0_accessor_0",
+                        "TEXCOORD_0": "big_Block_base_-_checkwebp_0_mesh_0_accessor_1"
+                    }
+                }
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "big_Block_base_-_checkwebp_0_1_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "big_Block_base_-_checkwebp_0_1_mesh_accessor",
+                        "NORMAL": "big_Block_base_-_checkwebp_0_1_mesh_accessor_0",
+                        "TEXCOORD_0": "big_Block_base_-_checkwebp_0_1_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1_mesh_0": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "big_Block_base_-_checkwebp_0_1_mesh_0_accessor_2",
+                    "attributes": {
+                        "POSITION": "big_Block_base_-_checkwebp_0_1_mesh_0_accessor",
+                        "NORMAL": "big_Block_base_-_checkwebp_0_1_mesh_0_accessor_0",
+                        "TEXCOORD_0": "big_Block_base_-_checkwebp_0_1_mesh_0_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_8_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_7_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_6_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_5_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_4_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_3_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_2_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0_mesh": {
+            "name": "",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": "67eeecfa-5b61-44df-b01b-cef034a6bc82",
+                    "indices": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor_2",
+                    "attributes": {
+                        "POSITION": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor",
+                        "NORMAL": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor_0",
+                        "TEXCOORD_0": "Block_base_1_2_Block_base_-_checkwebp_0_mesh_accessor_1"
+                    }
+                }
+            ]
+        }
+    },
+    "nodes": {
+        "model.obj": {
+            "children": [
+                "big_Block_base_-_checkwebp_0",
+                "big_Block_base_-_checkwebp_0_1",
+                "Block_base_8_2_Block_base_-_checkwebp_0",
+                "Block_base_7_2_Block_base_-_checkwebp_0",
+                "Block_base_6_2_Block_base_-_checkwebp_0",
+                "Block_base_5_2_Block_base_-_checkwebp_0",
+                "Block_base_4_2_Block_base_-_checkwebp_0",
+                "Block_base_3_2_Block_base_-_checkwebp_0",
+                "Block_base_2_2_Block_base_-_checkwebp_0",
+                "Block_base_1_2_Block_base_-_checkwebp_0"
+            ]
+        },
+        "big_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "big_Block_base_-_checkwebp_0_mesh",
+                "big_Block_base_-_checkwebp_0_mesh_0"
+            ]
+        },
+        "big_Block_base_-_checkwebp_0_1": {
+            "meshes": [
+                "big_Block_base_-_checkwebp_0_1_mesh",
+                "big_Block_base_-_checkwebp_0_1_mesh_0"
+            ]
+        },
+        "Block_base_8_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_8_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_7_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_7_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_6_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_6_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_5_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_5_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_4_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_4_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_3_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_3_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_2_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_2_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        },
+        "Block_base_1_2_Block_base_-_checkwebp_0": {
+            "meshes": [
+                "Block_base_1_2_Block_base_-_checkwebp_0_mesh"
+            ]
+        }
+    },
+    "samplers": {
+        "sampler": {
+            "wrapS": 10497,
+            "wrapT": 10497,
+            "magFilter": 9729,
+            "minFilter": 9729
+        }
+    },
+    "scenes": {
+        "defaultScene": {
+            "nodes": [
+                "model.obj"
+            ]
+        }
+    },
+    "textures": {
+        "texture": {
+            "source": "image",
+            "sampler": "sampler"
+        }
+    },
+    "scene": "defaultScene"
+}
