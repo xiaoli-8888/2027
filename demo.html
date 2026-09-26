@@ -8,6 +8,7 @@
 <script src="EXRLoader.js?v=5"></script>
 <script src="sky_model.js?v=5"></script>
   <script src="paper_tex.js"></script>
+  <script src="cart_pic.js"></script>
 <script>
 // 精简 GLB 加载器（内联，支持贴图纹理）
 function loadGLB(url, onLoad, onError) {
@@ -180,7 +181,7 @@ function loadGLB(url, onLoad, onError) {
   }).catch(onError || function(e){ console.error('GLB load error', e); });
 }
 </script>
-<link href="https://fonts.font.im/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=Caveat:wght@400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.font.im/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Noto+Sans+SC:wght@200;300;400;500;700;900&family=Noto+Serif+SC:wght@200;300;400;500&family=Caveat:wght@400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style id="theme-vars">
   :root {
     --bg: #FAFAFA;
@@ -259,7 +260,7 @@ function loadGLB(url, onLoad, onError) {
   .select-page { padding: 32px 40px 120px; overflow: visible; }
   .brand-title {
     font-size: 48px;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: -0.02em;
     margin-bottom: 8px; text-align: left;
   }
@@ -631,7 +632,7 @@ function loadGLB(url, onLoad, onError) {
   .select-page { padding: 32px 40px 120px; overflow: visible; }
   .brand-title {
     font-size: 48px;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: -0.02em;
     margin-bottom: 8px; text-align: left;
   }
@@ -957,7 +958,7 @@ function loadGLB(url, onLoad, onError) {
   /* 标题和副标题 —— 胶带撕开后才出现 */
   .splash-title {
     position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
-    font-size: 52px; font-weight: 300; letter-spacing: -0.02em;
+    font-size: 52px; font-weight: 400; letter-spacing: -0.02em;
     opacity: 0; transition: opacity 0.8s ease 0.1s;
   }
   .splash.torn .splash-title { opacity: 1; }
@@ -1450,20 +1451,35 @@ function loadGLB(url, onLoad, onError) {
 }
 .intro-card-text.fade-out { opacity: 0; }
 .intro-card-text .hello-text {
-  font-family: 'Dancing Script', 'Caveat', cursive;
-  font-weight: 700;
-  font-size: 48px;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei Light', sans-serif;
+  font-weight: 400;
+  font-size: 50px;
   color: #000000;
   line-height: 1;
   margin-bottom: 8px;
-}
+  letter-spacing: 0.01em;
+  transform: translateY(-30px);}
+.intro-card-text .hello-text { display: none; }
 .intro-card-text .cn-text {
-  font-family: 'Ma Shan Zheng', 'STXingkai', 华文行楷, 'STKaiti', 楷体, cursive;
-  font-size: 28px;
+  font-family: 'Noto Sans SC', 'Microsoft YaHei Light', 'DengXian Light', sans-serif;
+  font-size: 30px;
+  font-weight: 400;
   color: #000000;
-  line-height: 1.4;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
   text-align: center;
+  transform: translateY(-30px);}
+.corner-pic {
+  position: absolute;
+  width: 90px;
+  height: auto;
+  opacity: 0.9;
+  pointer-events: none;
+  display: none;
+  z-index: 6;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
+
 .intro-card-text .char {
   display: inline-block;
   opacity: 0;
@@ -1529,11 +1545,12 @@ function loadGLB(url, onLoad, onError) {
     <div class="hello-text" id="helloText"></div>
     <div class="cn-text" id="cnText"></div>
   </div>
+  <img class="corner-pic" id="cornerPic" alt="corner" />
   <div class="intro-hint" id="introHint">按住卡片向下拖动</div>
 </section>
 
 <section class="page select-page" id="page-select">
-  <h1 class="brand-title">邀请他们一起逛街吧</h1>
+  <h1 class="brand-title">信封已寄出，跟他们一起逛街吧</h1>
   <p class="brand-sub">拿不定主意, TA 来帮你把关</p>
 
   <div class="companion-scroller" id="scrollerRow1">
@@ -2209,7 +2226,7 @@ renderSelectPage();
   // ===== Three.js 场景 =====
   var scene = new THREE.Scene();
   // 纯色背景（与地面蓝绿色一致）
-  scene.background = new THREE.Color(0x40B8E8);
+  scene.background = new THREE.Color(0x47C2DD);
   var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 5, 4);
   camera.lookAt(0, 0, -4);
@@ -2366,7 +2383,7 @@ renderSelectPage();
   var cardMatL = makePaperMat(0);
   var cardMatR = makePaperMat(0.5);
   // ===== 卡片：左右两半（用于对折动画） =====
-  var cardW = 1.8, cardH = 2.4;
+  var cardW = 1.6, cardH = 2.13;
   var halfW = cardW / 2;
 
   var cardRoot = new THREE.Group();
@@ -2509,12 +2526,13 @@ renderSelectPage();
   // ===== 文字逐个出现动画 =====
   function showCardText() {
     if (textShown) return;
+    try { var cp = document.getElementById('cornerPic'); if (cp && typeof CART_PIC_DATA !== 'undefined') { cp.src = CART_PIC_DATA; cp.style.display = 'block'; } } catch (e) {}
     textShown = true;
     var helloEl = document.getElementById('helloText');
     var cnEl = document.getElementById('cnText');
     if (!helloEl || !cnEl) return;
-    var helloStr = 'hello';
-    var cnStr = '欢迎来到友好购物空间';
+    var helloStr = '';
+    var cnStr = String.fromCharCode(0x5BC4,0x51FA,0x4FE1,0x5C01,0x5FEB,0x6765,0x5BFB,0x627E,0x4F60,0x7684,0x8D2D,0x7269,0x642D,0x5B50);
     // 清空
     helloEl.innerHTML = '';
     cnEl.innerHTML = '';
@@ -2529,6 +2547,22 @@ renderSelectPage();
       delay += 0.06;
     }
     delay += 0.2;
+    var l1wrap = document.createElement('div');
+    l1wrap.style.textAlign = 'left';
+    l1wrap.style.marginTop = '-20px';
+    l1wrap.style.marginBottom = '25px';
+    l1wrap.style.width = '100%';
+    var l1str = 'To' + String.fromCharCode(0x670B, 0x53CB, 0xFF0C);
+    for (var m = 0; m < l1str.length; m++) {
+      var sp1 = document.createElement('span');
+      sp1.className = 'char';
+      sp1.textContent = l1str[m];
+      sp1.style.animationDelay = delay + 's';
+      l1wrap.appendChild(sp1);
+      delay += 0.06;
+    }
+    cnEl.appendChild(l1wrap);
+    delay += 0.15;
     // 中文每个字（分两行：欢迎来到 / 友好购物空间）
     for (var j = 0; j < cnStr.length; j++) {
       var sp2 = document.createElement('span');
@@ -2537,7 +2571,7 @@ renderSelectPage();
       sp2.style.animationDelay = delay + 's';
       cnEl.appendChild(sp2);
       delay += 0.08;
-      if (j === 3) {
+      if (j === 3 || j === 7) {
         cnEl.appendChild(document.createElement('br'));
       }
     }
@@ -2547,6 +2581,8 @@ renderSelectPage();
   function hideCardText() {
     var el = document.getElementById('introCardText');
     if (el) el.classList.add('fade-out');
+    var cp = document.getElementById('cornerPic');
+    if (cp) cp.style.display = 'none';
   }
 
   var isDragging = false, dragStartY = 0, dragDist = 0;
@@ -2658,6 +2694,7 @@ renderSelectPage();
 
   // 让 HTML 文字实时跟随 3D 卡片位置
   var _projVec = new THREE.Vector3();
+  var _brVec = new THREE.Vector3();
   function syncTextToCard() {
     var textEl = document.getElementById('introCardText');
     if (!textEl) return;
@@ -2666,6 +2703,13 @@ renderSelectPage();
     var sy = (-_projVec.y * 0.5 + 0.5) * window.innerHeight;
     textEl.style.left = sx + 'px';
     textEl.style.top = sy + 'px';
+    // Position the stamp at the card's bottom-right corner projection
+    var stampEl = document.getElementById('cornerPic');
+    if (stampEl) {
+      _brVec.set(cardRoot.position.x + 0.45, cardRoot.position.y - 0.9, cardRoot.position.z).project(camera);
+      stampEl.style.left = ((_brVec.x * 0.5 + 0.5) * window.innerWidth) + 'px';
+      stampEl.style.top  = ((-_brVec.y * 0.5 + 0.5) * window.innerHeight) + 'px';
+    }
   }
 
   // ===== 动画循环 =====
@@ -2702,7 +2746,7 @@ renderSelectPage();
     if (state === STATE.SLIDE_IN) {
       slideProgress = Math.min(slideProgress + dt * 0.8, 1);
       var e = easeOutCubic(slideProgress);
-      cardRoot.position.y = -5 + e * 6.8;
+      cardRoot.position.y = -5 + e * 7.4;
       planeRoot.position.y = cardRoot.position.y;
       if (slideProgress >= 1) {
         state = STATE.IDLE;
@@ -2711,7 +2755,7 @@ renderSelectPage();
     }
 
     if (state === STATE.IDLE) {
-      cardRoot.position.y = 1.8 + Math.sin(t * 1.5) * 0.06;
+      cardRoot.position.y = 2.4 + Math.sin(t * 1.5) * 0.06;
       
       planeRoot.position.y = cardRoot.position.y;
       syncTextToCard();
